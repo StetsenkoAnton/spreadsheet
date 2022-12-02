@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: 'PageHome',
+  name: "PageHome",
   components: {},
 };
 </script>
