@@ -4,6 +4,11 @@ import { createRequire } from 'node:module';
 import { Server } from "socket.io";
 import { default as http } from "http";
 import { SPREADSHEET_EVENTS } from '../core/spreadsheet-events.js';
+import * as XLSX from "xlsx/xlsx.mjs";
+import * as fs from "fs";
+
+/* load 'fs' for readFile and writeFile support */
+XLSX.set_fs(fs);
 
 const require = createRequire(import.meta.url);
 const API_V_1 = require('./api/index.router.cjs');
@@ -23,6 +28,14 @@ app.use('/api/v1', API_V_1);
 app.get("/", (req, res) => {
   res.sendFile(fileURLToPath(indexFile));
 });
+
+app.get("/xlsx", (req, res) => {
+  var workbook = XLSX.readFile(fileURLToPath(new URL('../documents/TEST.xlsx', import.meta.url)));
+  var worksheet = workbook.Sheets[workbook.SheetNames[0]];
+  console.log(worksheet);
+  res.json(worksheet);
+});
+
 
 io.on("connection", (socket) => {
   socket.on('chat message', (msg) => {
