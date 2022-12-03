@@ -2,7 +2,7 @@
   <header>
     <nav>
       <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/spreadsheet">Spreadsheet</RouterLink>
+      <RouterLink to="/table">table</RouterLink>
     </nav>
   </header>
 
@@ -10,18 +10,17 @@
 </template>
 
 <script>
-  import { RouterLink, RouterView } from 'vue-router'
-  import HelloWorld from './components/HelloWorld.vue'
+import { RouterLink, RouterView } from "vue-router";
 
-  export default {
-    name: 'App',
-    components: {RouterLink, RouterView, HelloWorld},
-  };
+export default {
+  name: "App",
+  components: { RouterLink, RouterView },
+};
 </script>
 
 <style scoped>
 header {
- margin-bottom: 2rem;
+  margin-bottom: 2rem;
 }
 
 nav a.router-link-exact-active {
