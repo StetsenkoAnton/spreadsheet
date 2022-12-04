@@ -33,6 +33,9 @@ npm run build
 ```sh
 npm run lint
 ```
+
+### [Sheetjs DOCS](https://docs.sheetjs.com/)
+
 TODO
 1. Файлы хранятся в папку Files
 2. Запрос на список файлов
