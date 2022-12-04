@@ -1,21 +1,36 @@
 <template>
-  <div>
-    <button type="button" @click="onSort">
+  <div class="header-cell">
+    <div></div>
+    <button class="header-cell__sort" type="button" @click="onSort">
       {{ columnInfo.name }}
       <template v-if="sortInfo.column === columnInfo.index">
         <span v-if="sortInfo.direction === 'abc'">&#8595;</span>
         <span v-if="sortInfo.direction === 'zyx'">&#8593;</span>
       </template>
     </button>
-    <button type="button" @click="openFilters">Filter</button>
+    <CustomTableHeaderFilters
+      :column-info="columnInfo"
+      :data-table="dataTable"
+      :filter-info="filterInfo"
+      @sorted="onSort"
+      @filtered="onFilter"
+    />
   </div>
 </template>
 
 <script>
+import CustomTableHeaderFilters from "@/components/CustomTableHeaderFilters.vue";
+
 const sortLine = ["abc", "zyx", ""];
 export default {
-  components: {},
+  components: { CustomTableHeaderFilters },
   props: {
+    dataTable: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
     columnInfo: {
       type: Object,
       default() {
@@ -34,12 +49,18 @@ export default {
         };
       },
     },
-    filterInfo: {},
+    filterInfo: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
   },
   data() {
-    return {};
+    return {
+      showFilterModal: false,
+    };
   },
-  computed: {},
   methods: {
     onSort() {
       const directionIndex = sortLine.findIndex(
@@ -49,15 +70,34 @@ export default {
         directionIndex === sortLine.length - 1
           ? sortLine[0]
           : sortLine[directionIndex + 1];
-      console.log(directionIndex, sortLine.length, nextDirection);
       this.$emit("sorted", {
         column: this.columnInfo.index,
         direction: nextDirection,
       });
     },
-    openFilters() {},
+    onFilter(newValue) {
+      this.$emit("filtered", newValue);
+    },
+    openFilters() {
+      this.showFilterModal = true;
+    },
+    applyFilter() {
+      this.showFilterModal = false;
+    },
+    resetFilter() {
+      this.showFilterModal = false;
+    },
   },
 };
 </script>
 
-<style></style>
+<style>
+.header-cell {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+}
+.header-cell__sort {
+  display: flex;
+}
+</style>

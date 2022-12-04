@@ -1,20 +1,21 @@
 <template>
-  <div :class="cellClass" tabindex="-1" @click="cellFocus" @dblclick="cellEdit">
+  <div :class="cellClass" tabindex="-1" ref="cell" @dblclick="cellEdit">
     <input
       v-if="status === 'edit'"
       class="table-cell__input"
       type="text"
-      :value="cellValue.value"
+      v-model="cellRaw"
       ref="input"
-      @input="onChange"
-      @focus="onSelect"
-      @blur="onBlur"
+      @keydown.enter="cellRest"
+      @keydown.esc="cellRest"
     />
-    <span v-if="false">{{ cellValue.value }}</span>
+    <span>{{ cellValue.value }}</span>
   </div>
 </template>
 
 <script>
+import clickOutside from "../services/clickOutside";
+
 const STATUS = {
   rest: "",
   edit: "edit",
@@ -41,7 +42,9 @@ export default {
   emits: ["input", "selected", "unselected"],
   data() {
     return {
-      status: STATUS.edit,
+      status: STATUS.rest,
+      handleOutsideClick: () => {},
+      cellRaw: "",
     };
   },
   computed: {
@@ -49,49 +52,46 @@ export default {
       return {
         "table-cell": true,
         "table-cell--edit": this.status === STATUS.edit,
-        "table-cell--focus": this.status === STATUS.focus,
+        "table-cell--selected": this.cellValue.selected,
       };
     },
   },
   methods: {
     cellRest() {
-      // console.log("cellRest");
-      // this.status = STATUS.rest;
-      // document.body.removeEventListener('click', this.cellRest);
-    },
-    cellFocus() {
-      // console.log("cellFocus");
-      // this.status = STATUS.focus;
-      // this.$nextTick(() => {
-      //   document.body.addEventListener("click", this.cellRest);
-      // });
+      this.status = STATUS.rest;
+      this.onBlur();
+      document.removeEventListener("click", this.handleOutsideClick);
     },
     cellEdit() {
-      // this.status = STATUS.edit;
-      // this.$nextTick(() => {
-      //   this.$refs.input.focus();
-      // });
-    },
-    onChange(e) {
-      this.$emit("input", {
-        lineN: this.lineNumber,
-        cellN: this.cellValue.id,
-        value: e.target.value,
+      if (this.cellValue.selected) return;
+      this.status = STATUS.edit;
+      this.cellRaw = this.cellValue.value;
+      this.onSelect();
+      this.$nextTick(() => {
+        this.$refs.input.focus();
+        this.handleOutsideClick = clickOutside(
+          null,
+          this.$refs.cell,
+          this.cellRest
+        );
+        document.addEventListener("click", this.handleOutsideClick);
       });
+    },
+    getRequestDate(value) {
+      return {
+        row: this.lineNumber,
+        col: this.cellValue.column,
+        value,
+      };
+    },
+    onChange() {
+      this.$emit("input", this.getRequestDate(this.cellRaw));
     },
     onSelect() {
-      this.$emit("selected", {
-        lineN: this.lineNumber,
-        cellN: this.cellValue.id,
-        value: this.cellValue.value,
-      });
+      this.$emit("selected", this.getRequestDate(this.cellValue.value));
     },
     onBlur() {
-      this.$emit("unselected", {
-        lineN: this.lineNumber,
-        cellN: this.cellValue.id,
-        value: this.cellValue.value,
-      });
+      this.$emit("unselected", this.getRequestDate(this.cellRaw));
     },
   },
 };
@@ -99,14 +99,11 @@ export default {
 
 <style>
 .table-cell__input {
-  //position: absolute;
-  //top: 0;
-  //bottom: 0;
-  //left: 0;
-  padding: 0.5em;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
   border-color: transparent;
-  width: min-content;
-  min-width: 0;
 }
 .table-cell__input:focus,
 .table-cell__input:focus-visible {
@@ -114,12 +111,19 @@ export default {
   outline: none;
 }
 .table-cell {
+  height: 100%;
   border: 2px solid transparent;
 }
-.table-cell--focus {
-  border-color: blue;
+.table-cell:focus-visible,
+.table-cell:focus {
+  border-color: dodgerblue;
 }
 .table-cell--edit {
   position: relative;
 }
+.table-cell--selected {
+  border-color: darkseagreen;
+  background: lightgrey;
+}
+
 </style>

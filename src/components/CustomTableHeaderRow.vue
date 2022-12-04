@@ -5,7 +5,7 @@
       <th v-for="val in headerList" :key="val" class="table__th">
         <CustomTableHeaderCell
           :column-info="val"
-          :filter-list="[]"
+          :data-table="dataTable"
           :filter-info="filterInfo"
           :sort-info="sortInfo"
           @sorted="onSort"
@@ -37,11 +37,14 @@ export default {
         };
       },
     },
-    filterInfo: {},
+    filterInfo: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
   },
-  data() {
-    return {};
-  },
+  emits: ["sorted", "filtered"],
   computed: {
     headerLength() {
       return this.dataTable[0].row.length;
@@ -75,7 +78,9 @@ export default {
     onSort(sort) {
       this.$emit("sorted", sort);
     },
-    onFilter() {},
+    onFilter(newValue) {
+      this.$emit("filtered", newValue);
+    },
   },
 };
 </script>

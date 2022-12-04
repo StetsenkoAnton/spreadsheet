@@ -1,29 +1,33 @@
 <template>
-  <table class="table">
-    <CustomTableHeaderRow
-      :data-table="dataTable"
-      :filter-info="filterInfo"
-      :sort-info="sortInfo"
-      @sorted="onSort"
-      @filtered="onFilter"
-    />
-    <tbody>
-      <tr v-for="{ lineNumber, row } in visibleTable" :key="lineNumber">
-        <th class="table__th">
-          {{ lineNumber + 1 }}
-        </th>
-        <td v-for="cell in row" :key="cell.id" class="table__td">
-          <CustomTableCell
-            :cell-value="cell"
-            :line-number="lineNumber"
-            @input="event"
-            @selected="event"
-            @unselected="event"
-          />
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div>
+    <div>Font size: <input type="number" v-model.number="fontSize" />px</div>
+    <hr />
+    <button type="button" @click="clearFilters">Reset filters</button>
+    <table class="table">
+      <CustomTableHeaderRow
+        :data-table="dataTable"
+        :filter-info="filtersSettings"
+        :sort-info="sortInfo"
+        @sorted="onSort"
+        @filtered="onFilter"
+      />
+      <tbody :style="{ fontSize: `${fontSize}px` }">
+        <tr v-for="{ lineNumber, row } in visibleTable" :key="lineNumber">
+          <th class="table__th">
+            {{ lineNumber + 1 }}
+          </th>
+          <td v-for="cell in row" :key="cell.column" class="table__td">
+            <CustomTableCell
+              :cell-value="cell"
+              :line-number="lineNumber"
+              @selected="onSelected"
+              @unselected="onUnselected"
+            />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script>
@@ -43,25 +47,36 @@ export default {
       },
     },
   },
-  // mounted() {
-  //   console.log(this.$refs.table);
-  // },
   data() {
     return {
+      fontSize: 16,
       sortColumn: 0,
-      sortDirection: "abc", // "abc", "zyx"
-      // filterColumn: 1,
-      // filterDirection: "abc", // "abc", "zyx"
+      sortDirection: "", // "abc", "zyx"
+      filtersSettings: [
+        // { column: 1, search: "Tagcat", isExact: true },
+        // { column: 2, search: "ina", isExact: false },
+      ],
     };
   },
   computed: {
     filteredTable() {
-      return this.dataTable;
+      if (!this.filtersSettings.length) return this.dataTable;
+      let filteredTable = this.dataTable;
+      this.filtersSettings.forEach((filtersSettings) => {
+        filteredTable = this.filterIteration(filtersSettings, filteredTable);
+      });
+      return filteredTable;
     },
     visibleTable() {
-      if (!this.sortDirection) return this.dataTable;
+      if (!this.sortDirection) return this.filteredTable;
       return [...this.filteredTable].sort((a, b) => {
-        if (a.row[this.sortColumn].value.toUpperCase > b.row[this.sortColumn].value.toUpperCase) {
+        const aVal = a.row[this.sortColumn].value;
+        const bVal = b.row[this.sortColumn].value;
+        const aNormalize =
+          typeof aVal === "number" ? aVal : aVal.toString().toUpperCase();
+        const bNormalize =
+          typeof bVal === "number" ? bVal : bVal.toString().toUpperCase();
+        if (aNormalize > bNormalize) {
           return this.sortDirection === "abc" ? -1 : 1;
         }
         return this.sortDirection === "abc" ? 1 : -1;
@@ -73,19 +88,39 @@ export default {
         direction: this.sortDirection,
       };
     },
-    filterInfo() {
-      return [];
-    },
   },
   methods: {
-    event(e) {
-      console.log(e);
+    clearFilters() {
+      this.filtersSettings = [];
+      this.sortColumn = 0;
+      this.sortDirection = "";
+    },
+    filterIteration(filtersSettings, list) {
+      return list.filter(({ row }) => {
+        const searchNormalize = filtersSettings.search.toUpperCase();
+        const cellNormalize = row[filtersSettings.column].value
+          .toString()
+          .toUpperCase();
+        if (list.isExact) return searchNormalize === cellNormalize;
+        return cellNormalize.includes(searchNormalize);
+      });
     },
     onSort({ column, direction }) {
       this.sortColumn = column;
       this.sortDirection = direction;
     },
-    onFilter() {},
+    onFilter({ index, filter }) {
+      if (!filter) this.filtersSettings.splice(index, 1);
+      else if (index < 0 && filter.search.length)
+        this.filtersSettings.push(filter);
+      else this.filtersSettings[index] = filter;
+    },
+    onSelected(e) {
+      console.log(e);
+    },
+    onUnselected(e) {
+      console.log(e);
+    },
   },
 };
 </script>
@@ -93,15 +128,20 @@ export default {
 <style>
 .table {
   width: 100%;
+  height: 1px;
   border: 1px solid;
   border-collapse: collapse;
 }
 .table__th,
 .table__td {
   border: 1px solid;
-  text-align: center;
 }
 .table__td {
   padding: 0;
+  text-align: center;
+  height: 100%;
+}
+* {
+  font-size: inherit;
 }
 </style>
