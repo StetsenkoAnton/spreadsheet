@@ -1,8 +1,10 @@
 {
   "name": "spreadsheet",
   "version": "0.0.0",
+  "type": "module",
   "private": true,
   "scripts": {
+    "server": "nodemon --watch server  server/index.js",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
@@ -10,9 +12,12 @@
   },
   "dependencies": {
     "@handsontable/vue3": "^12.2.0",
+    "express": "^4.18.2",
     "handsontable": "^12.2.0",
+    "socket.io": "^4.5.4",
     "vue": "^3.2.45",
-    "vue-router": "^4.1.6"
+    "vue-router": "^4.1.6",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.19.1/xlsx-0.19.1.tgz"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.4",
@@ -20,6 +25,7 @@
     "@vue/eslint-config-prettier": "^7.0.0",
     "eslint": "^8.22.0",
     "eslint-plugin-vue": "^9.3.0",
+    "nodemon": "^2.0.20",
     "prettier": "^2.7.1",
     "vite": "^3.2.4"
   }
