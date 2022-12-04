@@ -34,6 +34,16 @@ npm run build
 npm run lint
 ```
 
+### API - V1
+* /api/v1/document - get list of all documents in the documents folder
+    - response
+```js
+    [{name: "documentName"}]
+```
+
+* /api/v1/document/{documentName} - get document as json object
+    - response - see [Sheetjs DOCS](https://docs.sheetjs.com/)
+
 ### [Sheetjs DOCS](https://docs.sheetjs.com/)
 
 TODO
