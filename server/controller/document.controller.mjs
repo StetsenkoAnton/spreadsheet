@@ -23,16 +23,24 @@ export class DocumetController {
         });
     }
 
-    getDocument(name) {
-        if (name && fs.existsSync(this._documentsFolderURL)) {
-            const filePath =  fileURLToPath(new URL(this._documentsFolderURL.pathname + '/' + name, import.meta.url));
+    getDocument(documentName) {
+        if (documentName && fs.existsSync(this._documentsFolderURL)) {
+            const filePath =  fileURLToPath(new URL(this._documentsFolderURL.pathname + '/' + documentName, import.meta.url));
 
             if (fs.existsSync(filePath)) {
                 var workbook = XLSX.readFile(filePath);
                 return workbook;
             } else {
-                throw new Error(`File, ${name}, does not exist.`);
+                throw new Error(`File, ${documentName}, does not exist.`);
             }
+        }
+    }
+
+    getSpreedsheat(documentName, sheetName) {
+        const document = this.getDocument(documentName);
+
+        if (document.SheetNames.indexOf(sheetName) !== -1) {
+            return document.Sheets[sheetName];
         }
     }
 }
