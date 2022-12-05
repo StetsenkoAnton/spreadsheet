@@ -41,11 +41,8 @@ npm run lint
     [{name: "documentName"}]
 ```
 
-* /api/v1/document/{documentName} - get document as json workbook object
-    - response - see [Sheetjs - Workbook Object](https://docs.sheetjs.com/docs/csf/book)
-
-* /api/v1/document/{documentName}/{sheetName} - get document's sheet as json object
-    - response - see [Sheetjs - Sheet Object](https://docs.sheetjs.com/docs/csf/sheet)
+* /api/v1/document/{documentName} - get first sheet from the workbook
+    - response - see [Sheetjs - Workbook Object](https://docs.sheetjs.com/docs/csf/book), [Sheetjs - Sheet Object](https://docs.sheetjs.com/docs/csf/sheet)
 
 ### [Sheetjs DOCS](https://docs.sheetjs.com/)
 
