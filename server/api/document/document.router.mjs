@@ -17,10 +17,6 @@ documentRouter
     const documentController = new DocumetController();
     res.json(documentController.getDocument(req.params.name));
 })
-.get('/:name/:sheetName', (req, res) => {
-    const documentController = new DocumetController();
-    res.json(documentController.getSpreedsheat(req.params.name, req.params.sheetName));
-});
 
 documentRouter
 

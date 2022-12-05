@@ -41,11 +41,17 @@ npm run lint
     [{name: "documentName"}]
 ```
 
-* /api/v1/document/{documentName} - get document as json workbook object
-    - response - see [Sheetjs - Workbook Object](https://docs.sheetjs.com/docs/csf/book)
+* /api/v1/document/{documentName} - get first sheet from the workbook
+    - response - worksheet object
+    ```js
+        {
+            name: "documentName",
+            sheetName: "first sheet name",
+            data: [[cell0, cell1, cell3], [cell0, cell1, cell], [cell0, cell1, cell3]]
+        }
+    ```
 
-* /api/v1/document/{documentName}/{sheetName} - get document's sheet as json object
-    - response - see [Sheetjs - Sheet Object](https://docs.sheetjs.com/docs/csf/sheet)
+    ### data - contains the two dimensional array, each subarray has same length
 
 ### [Sheetjs DOCS](https://docs.sheetjs.com/)
 
