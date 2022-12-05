@@ -1,5 +1,6 @@
 //import { readdirSync } from 'fs';
-import { fileURLToPath } from 'url'
+import { fileURLToPath } from "url"
+import cors from "cors";
 // import { createRequire } from 'node:module';
 import { Server } from "socket.io";
 import { default as http } from "http";
@@ -14,6 +15,10 @@ XLSX.set_fs(fs);
 
 const indexFile = new URL('./html/index.html', import.meta.url);
 const app = express();
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true,
+}));
 const server = http.createServer(app);
 const io = new Server(server);
 
@@ -29,7 +34,7 @@ io.on("connection", (socket) => {
 
     console.log('message: ' + msg);
   });
-  });  
+  });
 
 server.listen(3000, () => {
   console.log("listening on *:3000");

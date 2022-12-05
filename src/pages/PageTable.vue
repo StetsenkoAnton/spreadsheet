@@ -1,179 +1,129 @@
 <template>
   <div>
-    <div>Row number <input type="number" v-model.number="rowSelected" /></div>
-    <div>First value <input type="text" v-model="firstValue" /></div>
-    <hot-table
-      ref="table"
-      :data="dataTable"
-      :settings="settings"
-      :cell="cellComputed"
-      :afterBeginEditing="event"
-      :afterChange="event"
-      :afterInit="event"
-      :afterUpdateData="event"
-      :afterSelection="event"
-      :afterSetDataAtCell="event"
-      :beforeKeyDown="event"
-      :afterSelectionByProp="event"
-      :afterSelectionEnd="event"
-      :afterSelectionEndByProp="event"
+    <CustomTable
+      v-if="dataTable.length"
+      :data-table="dataTable"
+      :selected-list="cellComputed"
+      @cellSelected="event"
+      @cellUpdated="event"
     />
-    <button type="button" @click="importFile">Import CSV</button>
+    <p v-else>{{ emptyText }}</p>
   </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
-import Handsontable from "handsontable";
-import { HotTable } from "@handsontable/vue3";
-import { registerAllModules } from "handsontable/registry";
-import "handsontable/dist/handsontable.full.css";
-import { data } from "./constants.js";
-// import {CommentObject} from "handsontable/plugins/comments";
+import CustomTable from "@/components/CustomTable.vue";
+import { getTable } from "@/services/api.js";
 
-registerAllModules();
-
-const customRender = (
-  instance,
-  td,
-  row,
-  column,
-  prop,
-  value,
-  cellProperties
-) => {
-  console.log(value);
-  Handsontable.renderers.TextRenderer.apply(this, [
-    instance,
-    td,
-    row,
-    column,
-    prop,
-    value.value,
-    cellProperties,
-  ]);
-};
-
-const customEditor = (
-  instance,
-  td,
-  row,
-  column,
-  prop,
-  value,
-  cellProperties
-) => {
-  console.log(value);
-  const input = document.createElement("input");
-  input.value = value.value;
-  // div.style.width = `${value * 10}px`;
-  //
-  // // addClassWhenNeeded(td, cellProperties);
-  // Handsontable.dom.addClass(div, "progressBar");
-  // Handsontable.dom.empty(td);
-
-  td.appendChild(input);
-};
-
-export default defineComponent({
+export default {
+  name: "PageCustom",
   components: {
-    HotTable,
+    CustomTable,
   },
-  // mounted() {
-  //   console.log(this.$refs.table);
-  // },
+  async mounted() {
+    const name = this.$route.query.file;
+    if (!name) {
+      this.emptyText = "File not found";
+      return;
+    }
+    const x = await getTable(name);
+    console.log(x);
+  },
   data() {
     return {
-      settings: {
-        rowHeaders: true,
-        colHeaders: true,
-        // contextMenu: true,
-        filters: true,
-        dropdownMenu: true,
-        sortIndicator: true,
-        columnSorting: true,
-        height: "auto",
-        licenseKey: "non-commercial-and-evaluation",
-        columns: [
-          { renderer: customRender, editor: customEditor },
-          { renderer: customRender },
-          { renderer: customRender },
-          { renderer: customRender },
-          { renderer: customRender },
-          { renderer: customRender },
-          { renderer: customRender },
-          { renderer: customRender },
-          { renderer: customRender },
-          { renderer: customRender },
-        ],
-      },
-      data: data,
-      rowSelected: 1,
+      fontSize: 16,
       firstValue: "Tagcat",
-    };
-  },
-  computed: {
-    cellComputed() {
-      return [
+      emptyText: "Loading...",
+      cellComputed: [
         {
-          row: this.rowSelected,
+          row: 0,
           col: 0,
-          className: "cell-busy",
         },
         {
           row: 1,
           col: 1,
-          className: "cell-busy",
-          valid: false,
         },
-      ];
-    },
+      ],
+      rawTable: [
+        //   {
+        //     lineNumber: 0,
+        //     row: [
+        //       { value: 2, column: 0 },
+        //       { value: "Tagcat", column: 1 },
+        //       { value: "United Kingdom", column: 2 },
+        //       { value: "Classic Vest", column: 3 },
+        //       { value: "11/10/2020", column: 4 },
+        //       { value: "01-2331942", column: 5 },
+        //       { value: true, column: 6 },
+        //       { value: "172", column: 7 },
+        //       { value: 2, column: 8 },
+        //       { value: 22, column: 9 },
+        //     ],
+        //   },
+        //   {
+        //     lineNumber: 1,
+        //     row: [
+        //       { value: 1, column: 0 },
+        //       { value: "Zoomzone", column: 1 },
+        //       { value: "Indonesia", column: 2 },
+        //       { value: "Cycling Cap", column: 3 },
+        //       { value: "03/05/2020", column: 4 },
+        //       { value: "88-2768633", column: 5 },
+        //       { value: true, column: 6 },
+        //       { value: "188", column: 7 },
+        //       { value: 6, column: 8 },
+        //       { value: 2, column: 9 },
+        //     ],
+        //   },
+        //   {
+        //     lineNumber: 2,
+        //     row: [
+        //       { value: 10, column: 0 },
+        //       { value: "Cycling", column: 1 },
+        //       { value: "Ukraine", column: 2 },
+        //       { value: "Dark Cap", column: 3 },
+        //       { value: "05/09/2002", column: 4 },
+        //       { value: "02-2768633", column: 5 },
+        //       { value: false, column: 6 },
+        //       { value: "155", column: 7 },
+        //       { value: 1, column: 8 },
+        //       { value: 12, column: 9 },
+        //     ],
+        //   },
+        //   {
+        //     lineNumber: 3,
+        //     row: [
+        //       { value: 11, column: 0 },
+        //       { value: "Tagcat", column: 1 },
+        //       { value: "China", column: 2 },
+        //       { value: "Light Cap", column: 3 },
+        //       { value: "09/09/2002", column: 4 },
+        //       { value: "10-2768633", column: 5 },
+        //       { value: false, column: 6 },
+        //       { value: "122", column: 7 },
+        //       { value: 4, column: 8 },
+        //       { value: 222, column: 9 },
+        //     ],
+        //   },
+      ],
+    };
+  },
+  computed: {
     dataTable() {
-      // data[0][1] = this.firstValue;
-      // return [...data];
-      return [
-        [
-          { value: false, id: "1" },
-          { value: "Tagcat", id: "2" },
-          { value: "United Kingdom", id: "3" },
-          { value: "Classic Vest", id: "4" },
-          { value: "11/10/2020", id: "5" },
-          { value: "01-2331942", id: "6" },
-          { value: true, id: "7" },
-          { value: "172", id: "8" },
-          { value: 2, id: "9" },
-          { value: 2, id: "10" },
-        ],
-        [
-          { value: true, id: "11" },
-          { value: "Zoomzone", id: "12" },
-          { value: "Indonesia", id: "13" },
-          { value: "Cycling Cap", id: "14" },
-          { value: "03/05/2020", id: "15" },
-          { value: "88-2768633", id: "16" },
-          { value: true, id: "17" },
-          { value: "188", id: "18" },
-          { value: 6, id: "19" },
-          { value: 2, id: "20" },
-        ],
-      ];
+      const table = this.rawTable;
+      if (!table.length) return [];
+      this.cellComputed.forEach(({ row, col }) => {
+        table[row].row[col].selected = true;
+      });
+      return table;
     },
   },
   methods: {
     event(e, name, s, w, d, f) {
       console.log(name, e, s, w, d, f);
     },
-    importFile() {},
   },
-});
+};
 </script>
 
-<style>
-.handsontable {
-  font-size: 1rem;
-}
-td.cell-busy {
-  background-color: rgba(2, 2, 2, 0.1);
-  pointer-events: none;
-}
-</style>
+<style></style>

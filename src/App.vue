@@ -2,7 +2,6 @@
   <header>
     <nav>
       <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/table">table</RouterLink>
     </nav>
   </header>
 
