@@ -60,7 +60,10 @@ function _normilizeDimentionalArray(array, maxCellIndex) {
 
     if (rowData.row.length < maxCellIndex) {
       for (let ci = rowData.row.length; ci < maxCellIndex; ci++) {
-        rowData.row.push("");
+        rowData.row.push({
+          value: "",
+          column: ci,
+        });
       }
     }
   }

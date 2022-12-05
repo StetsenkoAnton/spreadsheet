@@ -33,7 +33,7 @@ const io = new Server(server);
 
 app.use('/api/v1', API_V_1);
 
-app.get("/", (req, res) => {
+app.get("*", (req, res) => {
   res.sendFile(fileURLToPath(indexFile));
 });
 

@@ -8,20 +8,26 @@ const serverPath = `${serverRoot}/api/v1/`;
 
 const socket = io(serverRoot);
 socket.on("connect", () => {
-  console.log("connect", socket.id); // x8WIv7-mJelg7on_ALbx
+  console.log("connect", socket.id);
 });
 
 socket.on("disconnect", () => {
-  console.log("disconnect", socket.id); // undefined
+  alert("disconnect WS server");
 });
 
-socket.on(SEVENTS.CELL.FOCUS, (e) => {
-  console.log("FOCUS", e); // undefined
-});
-
-socket.on(SEVENTS.CELL.SAVE, (e) => {
-  console.log("SAVE", e); // undefined
-});
+export function streamGet(name, cb) {
+  socket.on(name, (e) => {
+    cb(e);
+  });
+}
+export function subscribeFocusEv(cb) {
+  console.log("FOCUS");
+  streamGet(SEVENTS.CELL.FOCUS, cb);
+}
+export function subscribeUpdateEv(cb) {
+  console.log("SAVE");
+  streamGet(SEVENTS.CELL.SAVE, cb);
+}
 export function streamSend(name, body) {
   socket.emit(name, body);
 }
