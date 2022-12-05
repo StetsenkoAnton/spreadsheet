@@ -3,7 +3,7 @@ import { fileURLToPath } from 'url'
 import { createRequire } from 'node:module';
 import { Server } from "socket.io";
 import { default as http } from "http";
-import { SPREADSHEET_EVENTS } from '../core/spreadsheet-events.js';
+import { SEVENTS } from '../core/spreadsheet-events.js';
 import * as XLSX from "xlsx/xlsx.mjs";
 import * as fs from "fs";
 
@@ -38,10 +38,20 @@ app.get("/xlsx", (req, res) => {
 
 
 io.on("connection", (socket) => {
-  socket.on('chat message', (msg) => {
-    io.emit('chat event send', { msg: msg, ev: SPREADSHEET_EVENTS.CELL.FOCUS });
+  socket.on(SEVENTS.CELL.FOCUS, (msg) => {
+    io.emit(SEVENTS.CELL.FOCUS, { msg: msg });
+  });
 
-    console.log('message: ' + msg);
+  socket.on(SEVENTS.CELL.FOCUS_LOST, (msg) => {
+    io.emit(SEVENTS.CELL.FOCUS_LOST, { msg: msg });
+  });
+
+  socket.on(SEVENTS.DOCUMENT.CONNECT, (msg) => {
+    io.emit(SEVENTS.DOCUMENT.CONNECT, { msg: msg });
+  });
+
+  socket.on(SEVENTS.DOCUMENT.CONNECT, (msg) => {
+    io.emit(SEVENTS.DOCUMENT.CONNECT, { msg: msg });
   });
   });  
 

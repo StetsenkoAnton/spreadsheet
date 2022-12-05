@@ -4,7 +4,7 @@ import cors from "cors";
 // import { createRequire } from 'node:module';
 import { Server } from "socket.io";
 import { default as http } from "http";
-import { SPREADSHEET_EVENTS } from '../core/spreadsheet-events.js';
+import { SEVENTS } from '../core/spreadsheet-events.js';
 import * as XLSX from "xlsx/xlsx.mjs";
 import * as fs from "fs";
 import path from "path";
@@ -38,7 +38,7 @@ app.get("/", (req, res) => {
 
 io.on("connection", (socket) => {
   socket.on('chat message', (msg) => {
-    io.emit('chat event send', { msg: msg, ev: SPREADSHEET_EVENTS.CELL.FOCUS });
+    io.emit('chat event send', { msg: msg, ev: SEVENTS.CELL.FOCUS });
 
     console.log('message: ' + msg);
   });
