@@ -23,7 +23,7 @@ export function getAllFiles() {
     });
 }
 export function getTable(name) {
-  return apiRequest(`${serverPath}document/${name}/Sheet1`)
+  return apiRequest(`${serverPath}document/${name}`)
     .then((response) => response)
     .catch((error) => {
       throw new Error(error);

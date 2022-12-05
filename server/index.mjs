@@ -11,16 +11,16 @@ import path from "path";
 import express from "express";
 import API_V_1 from "./api/index.router.mjs";
 
-const isDev = true; // TODO configure from package.json
-
+const isProd = process.env.NODE_ENV === 'production';
+const rootFolder = '../dist';
 /* load 'fs' for readFile and writeFile support */
 XLSX.set_fs(fs);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const indexFile = new URL('../dist/index.html', import.meta.url);
+const indexFile = new URL(`${rootFolder}/index.html`, import.meta.url);
 const app = express();
-app.use(express.static(path.join(__dirname, '/../dist')));
-if (isDev) {
+if (isProd) app.use(express.static(path.join(__dirname, `/${rootFolder}`)));
+else {
   app.use(cors({
     origin: 'http://localhost:5173',
     credentials: true,
