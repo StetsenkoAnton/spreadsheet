@@ -42,7 +42,16 @@ npm run lint
 ```
 
 * /api/v1/document/{documentName} - get first sheet from the workbook
-    - response - see [Sheetjs - Workbook Object](https://docs.sheetjs.com/docs/csf/book), [Sheetjs - Sheet Object](https://docs.sheetjs.com/docs/csf/sheet)
+    - response - worksheet object
+    ```js
+        {
+            name: "documentName",
+            sheetName: "first sheet name",
+            data: [[cell0, cell1, cell3], [cell0, cell1, cell], [cell0, cell1, cell3]]
+        }
+    ```
+
+    ### data - contains the two dimensional array, each subarray has same length
 
 ### [Sheetjs DOCS](https://docs.sheetjs.com/)
 

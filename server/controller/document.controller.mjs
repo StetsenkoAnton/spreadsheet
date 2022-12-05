@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url'
 import XLSX from "xlsx/xlsx.mjs";
 
 import envUtils from "../env-utils.mjs";
+import { adaptToArray } from "../utils/spreadsheet.adapter.mjs";
 
 
 export class DocumetController {
@@ -29,9 +30,13 @@ export class DocumetController {
             const filePath =  fileURLToPath(new URL(this._documentsFolderURL.pathname + '/' + documentName, import.meta.url));
 
             if (fs.existsSync(filePath)) {
-                var workbook = XLSX.readFile(filePath);
-                
-                return workbook.Sheets[workbook.SheetNames[0]];
+                var workbook = XLSX.readFile(filePath, {dense: true});
+
+                return {
+                    name: documentName,
+                    sheetName: workbook.SheetNames[0],
+                    data: adaptToArray(workbook.Sheets[workbook.SheetNames[0]])
+                };
             } else {
                 throw new Error(`File, ${documentName}, does not exist.`);
             }
