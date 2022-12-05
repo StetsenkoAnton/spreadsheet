@@ -19,6 +19,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const indexFile = new URL(`${rootFolder}/index.html`, import.meta.url);
 const app = express();
+
 if (isProd) app.use(express.static(path.join(__dirname, `/${rootFolder}`)));
 else {
   app.use(cors({
@@ -37,10 +38,14 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  socket.on('chat message', (msg) => {
-    io.emit('chat event send', { msg: msg, ev: SEVENTS.CELL.FOCUS });
-
-    console.log('message: ' + msg);
+  console.log("server connection");
+  socket.on(SEVENTS.CELL.FOCUS, (msg) => {
+    io.emit(SEVENTS.CELL.FOCUS, msg);
+    console.log('message FOCUS: ' + msg);
+  });
+  socket.on(SEVENTS.CELL.SAVE, (msg) => {
+    io.emit(SEVENTS.CELL.SAVE, msg);
+    console.log('message FOCUS: ' + msg);
   });
 });
 
