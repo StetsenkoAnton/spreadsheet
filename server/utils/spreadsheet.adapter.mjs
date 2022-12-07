@@ -5,7 +5,6 @@ function _adaptToArray(spreadsheet) {
   let adaptedData = [];
 
   if (spreadsheet && spreadsheet["!data"]) {
-    console.log(spreadsheet);
     let maxCellIndex = 0;
 
     for (let ri = 0; ri < spreadsheet["!data"].length; ri++) {
@@ -47,7 +46,13 @@ function _adaptToArray(spreadsheet) {
 
   return adaptedData;
 }
-
+// {
+//   TABLENAME: {
+//     selectedList: []
+//     rawTable: []
+//   }
+// }
+// rawTable
 // normalize two dimentional array to match subarray length - maxCellIndex
 function _normilizeDimentionalArray(array, maxCellIndex) {
   for (let i = 0; i < array.length; i++) {
@@ -55,7 +60,10 @@ function _normilizeDimentionalArray(array, maxCellIndex) {
 
     if (rowData.row.length < maxCellIndex) {
       for (let ci = rowData.row.length; ci < maxCellIndex; ci++) {
-        rowData.row.push("");
+        rowData.row.push({
+          value: "",
+          column: ci,
+        });
       }
     }
   }

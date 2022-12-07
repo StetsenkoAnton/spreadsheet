@@ -6,6 +6,7 @@
       type="text"
       v-model="cellRaw"
       ref="input"
+      @blur="cellRest"
       @keydown.enter="cellRest"
       @keydown.esc="cellRest"
     />
@@ -14,7 +15,6 @@
 </template>
 
 <script>
-import clickOutside from "../services/clickOutside";
 
 const STATUS = {
   rest: "",
@@ -43,7 +43,6 @@ export default {
   data() {
     return {
       status: STATUS.rest,
-      handleOutsideClick: () => {},
       cellRaw: "",
     };
   },
@@ -60,7 +59,6 @@ export default {
     cellRest() {
       this.status = STATUS.rest;
       this.onBlur();
-      document.removeEventListener("click", this.handleOutsideClick);
     },
     cellEdit() {
       if (this.cellValue.selected) return;
@@ -69,12 +67,6 @@ export default {
       this.onSelect();
       this.$nextTick(() => {
         this.$refs.input.focus();
-        this.handleOutsideClick = clickOutside(
-          null,
-          this.$refs.cell,
-          this.cellRest
-        );
-        document.addEventListener("click", this.handleOutsideClick);
       });
     },
     getRequestDate(value) {
@@ -91,6 +83,8 @@ export default {
       this.$emit("selected", this.getRequestDate(this.cellValue.value));
     },
     onBlur() {
+      const cell = this.cellValue;
+      cell.value = this.cellRaw;
       this.$emit("unselected", this.getRequestDate(this.cellRaw));
     },
   },

@@ -21,6 +21,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const indexFile = new URL(`${rootFolder}/index.html`, import.meta.url);
 const app = express();
+
 app.set('trust proxy', 1) // trust first proxy
 
 if (isProd)
@@ -58,7 +59,7 @@ app.use((req, res, next) => {
 
 app.use('/api/v1', API_V_1);
 
-app.get("/", (req, res) => {
+app.get("*", (req, res) => {
   res.sendFile(fileURLToPath(indexFile));
 });
 
@@ -66,10 +67,14 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 io.on("connection", (socket) => {
-  socket.on('chat message', (msg) => {
-    io.emit('chat event send', { msg: msg, ev: SEVENTS.CELL.FOCUS });
-
-    console.log('message: ' + msg);
+  console.log("server connection");
+  socket.on(SEVENTS.CELL.FOCUS, (msg) => {
+    io.emit(SEVENTS.CELL.FOCUS, msg);
+    console.log('message FOCUS: ' + msg);
+  });
+  socket.on(SEVENTS.CELL.SAVE, (msg) => {
+    io.emit(SEVENTS.CELL.SAVE, msg);
+    console.log('message FOCUS: ' + msg);
   });
 });
 

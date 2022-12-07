@@ -116,10 +116,10 @@ export default {
       else this.filtersSettings[index] = filter;
     },
     onSelected(e) {
-      console.log(e);
+      this.$emit("cellSelected", e);
     },
     onUnselected(e) {
-      console.log(e);
+      this.$emit("cellUpdated", e);
     },
   },
 };

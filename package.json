@@ -17,6 +17,7 @@
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "socket.io": "^4.5.4",
+    "socket.io-client": "^4.5.4",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.19.1/xlsx-0.19.1.tgz"
