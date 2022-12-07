@@ -5,7 +5,7 @@ function getDocumentsPath() {
 }
 
 const envUtils = {
-    documentsPath: getDocumentsPath,
+    getDocumentsPath: getDocumentsPath,
 }
 
 export default envUtils;
