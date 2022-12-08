@@ -11,9 +11,9 @@ export const SEVENTS = {
     FOCUSED: "CELL_FOCUSED",
   },
   DOCUMENT: {
-    // new user started to worn on the document
-    CONNECT: "DOCUMENT_CONNECT",
-    // user closed the document
-    DISCONNECT: "DOCUMENT_DISCONNECT",
+    // from front to back
+    SAVE: "DOCUMENT_SAVE",
+    // from back to front
+    SAVED: "DOCUMENT_SAVED",
   },
 };
