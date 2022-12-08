@@ -11,6 +11,7 @@ var DocumentTracker = function () {
   DocumentTracker._instance = this;
   this._documentUserMap = new Map();
   this._documentsMap = new Map();
+  this._documentFocusedCell = new Map();
 
   // add document user relation
   this.addUser = (documentName, userUID) => {
@@ -137,7 +138,82 @@ var DocumentTracker = function () {
         `DocumentName: ${documentName} and ${cellData} can not be null, undefined or empty string.`
       );
     }
-  }
+  };
+
+  /**
+   * Tracking focussed cells for each document
+   */
+
+  // add focussed cells
+  this.addFocussedCell = (documentName, cell) => {
+    if (documentName && cell) {
+      if (this._documentFocusedCell.has(documentName)) {
+        let cells = this._documentFocusedCell.get(documentName);
+        cells.push({
+          row: cell.row,
+          col: cell.col,
+        });
+
+        this._documentFocusedCell.set(documentName, cells);
+      } else {
+        let cells = [];
+        cells.push({
+          row: cell.row,
+          col: cell.col,
+        });
+        this._documentFocusedCell.set(documentName, cells);
+      }
+    } else {
+      throw new Error(
+        `DocumentName: ${documentName} or focussedCell ${cell} can not be null, undefined or empty string.`
+      );
+    }
+  };
+
+  // remove tracked focussed cells document
+  this.removeFocussedCell = (documentName, cell) => {
+    if (documentName && cell) {
+      if (this._documentFocusedCell.has(documentName)) {
+        const focussedCells = this._documentFocusedCell.get(documentName);
+
+        if (
+          focussedCells.length &&
+          focussedCells.find(
+            (c) => c.row === cell.row && c.col === cell.col
+          ) !== undefined
+        ) {
+          var tmpCells = focussedCells.filter(
+            (c) => c.row !== cell.row && c.col !== cell.col
+          );
+
+          if (tmpCells.length === 0) {
+            this._documentFocusedCell.delete(documentName);
+          } else {
+            this._documentFocusedCell.set(documentName, tmpCells);
+          }
+        }
+      }
+    } else {
+      throw new Error(
+        `DocumentName: ${documentName} or focussedCell ${cell} can not be null, undefined or empty string.`
+      );
+    }
+  };
+
+  // get focussed cell for the document
+  this.getFocussedCell = (documentName) => {
+    if (documentName) {
+      if (this._documentFocusedCell.has(documentName)) {
+        return this._documentFocusedCell.get(documentName);
+      }
+
+      return [];
+    } else {
+      throw new Error(
+        `DocumentName: ${documentName} can not be null, undefined or empty string.`
+      );
+    }
+  };
 };
 
 DocumentTracker.getInstance = () => {

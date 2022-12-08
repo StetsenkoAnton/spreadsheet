@@ -1,15 +1,17 @@
 import { SEVENTS } from "../../core/spreadsheet-events.js";
 import DocumentController from "../controller/document.controller.mjs";
 
+const documentController = new DocumentController();
+
 function onFocusCell(socket, data) {
+  documentController.addFocussedCell(data.tableName, data);
   socket.broadcast.emit(SEVENTS.CELL.FOCUSED, data);
 }
 
 function onSaveCell(socket, data) {
-  const documentController = new DocumentController();
   // TODO: update
   documentController.updateDocument(data.tableName, data);
-
+  documentController.removeFocussedCell(data.tableName, data);
   socket.broadcast.emit(SEVENTS.CELL.SAVED, data);
 }
 

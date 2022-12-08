@@ -94,4 +94,20 @@ export default class DocumentController {
       console.error("Unable to update document.");
     }
   }
+
+  addFocussedCell(documentName, cellData) {
+    if (documentName && cellData) {
+      this._docTracker.addFocussedCell(documentName, cellData);
+    } else {
+      console.error("Unable to add Focussed Cell.");
+    }
+  }
+
+  removeFocussedCell(documentName, cellData) {
+    if (documentName && cellData) {
+      this._docTracker.removeFocussedCell(documentName, cellData);
+    } else {
+      console.error("Unable to remove Focussed Cell.");
+    }
+  }
 }
