@@ -12,7 +12,7 @@ socket.on("connect", () => {
 });
 
 socket.on("disconnect", () => {
-  alert("disconnect WS server");
+  console.error("disconnect WS server");
 });
 
 export function streamGet(name, cb) {
@@ -22,10 +22,10 @@ export function streamGet(name, cb) {
   });
 }
 export function subscribeFocusEv(cb) {
-  streamGet(SEVENTS.CELL.FOCUS, cb);
+  streamGet(SEVENTS.CELL.FOCUSED, cb);
 }
 export function subscribeUpdateEv(cb) {
-  streamGet(SEVENTS.CELL.SAVE, cb);
+  streamGet(SEVENTS.CELL.SAVED, cb);
 }
 export function streamSend(name, body) {
   console.log("send", name, body);
