@@ -17,26 +17,24 @@ socket.on("disconnect", () => {
 
 export function streamGet(name, cb) {
   socket.on(name, (e) => {
+    console.log("get", name, e);
     cb(e);
   });
 }
 export function subscribeFocusEv(cb) {
-  console.log("FOCUS");
   streamGet(SEVENTS.CELL.FOCUS, cb);
 }
 export function subscribeUpdateEv(cb) {
-  console.log("SAVE");
   streamGet(SEVENTS.CELL.SAVE, cb);
 }
 export function streamSend(name, body) {
+  console.log("send", name, body);
   socket.emit(name, body);
 }
 export function streamSelectedCell(body) {
-  console.log("streamSelectedCell");
   streamSend(SEVENTS.CELL.FOCUS, body);
 }
 export function streamUpdatedCell(body) {
-  console.log("streamUpdatedCell");
   streamSend(SEVENTS.CELL.SAVE, body);
 }
 function apiRequest(path) {
