@@ -21,6 +21,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const indexFile = new URL(`${rootFolder}/index.html`, import.meta.url);
 const app = express();
+const devCors = ["http://127.0.0.1:5173", "http://localhost:5173"];
 
 app.set('trust proxy', 1) // trust first proxy
 
@@ -29,9 +30,10 @@ if (isProd)
   app.use(express.static(path.join(__dirname, `/${rootFolder}`)));
 } else {
   app.use(cors({
-    origin: 'http://127.0.0.1:5173',
-    credentials: true,
-  }));
+      origin: devCors,
+      credentials: true,
+    })
+  );
 }
 
 // todo: update with values from env
@@ -49,6 +51,7 @@ app.use(
 
 // // register session before api
 app.use((req, res, next) => {
+  console.log(req.session);
   // add session uid for user
   if (req.session.isNew && !req.session.sid) {
     req.session.sid = (req.session.sid || crypto.randomUUID());
@@ -57,24 +60,29 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/api/v1', API_V_1);
+app.use("/api/v1", API_V_1);
 
 app.get("*", (req, res) => {
   res.sendFile(fileURLToPath(indexFile));
 });
 
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: devCors,
+    credentials: true
+  }
+});
 
 io.on("connection", (socket) => {
   console.log("server connection");
   socket.on(SEVENTS.CELL.FOCUS, (msg) => {
     io.emit(SEVENTS.CELL.FOCUS, msg);
-    console.log('message FOCUS: ' + msg);
+    console.log("message FOCUS: " + msg);
   });
   socket.on(SEVENTS.CELL.SAVE, (msg) => {
     io.emit(SEVENTS.CELL.SAVE, msg);
-    console.log('message FOCUS: ' + msg);
+    console.log("message FOCUS: " + msg);
   });
 });
 
