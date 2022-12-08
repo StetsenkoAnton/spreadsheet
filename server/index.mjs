@@ -12,6 +12,8 @@ import express from "express";
 import cookieSession from "cookie-session";
 import crypto from "crypto";
 import API_V_1 from "./api/index.router.mjs";
+import socketHandler from "./utils/websocket.handler.mjs";
+import registerEvents from "./utils/websocket.handler.mjs";
 
 const isProd = process.env.NODE_ENV === "production";
 const rootFolder = "../dist";
@@ -71,15 +73,7 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  console.log("server connection");
-  socket.on(SEVENTS.CELL.FOCUS, (msg) => {
-    io.emit(SEVENTS.CELL.FOCUS, msg);
-    console.log("message FOCUS: " + msg);
-  });
-  socket.on(SEVENTS.CELL.SAVE, (msg) => {
-    io.emit(SEVENTS.CELL.SAVE, msg);
-    console.log("message FOCUS: " + msg);
-  });
+  registerEvents(io, socket);
 });
 
 server.listen(3000, () => {

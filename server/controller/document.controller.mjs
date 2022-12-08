@@ -22,7 +22,9 @@ export default class DocumentController {
           (err, filenames) => (err != null ? reject(err) : resolve(filenames))
         );
       } else {
-        throw new Error(`Directory ${this._documentsFolderURL} does not exists.`);
+        console.error(
+          `Directory ${this._documentsFolderURL} does not exists.`
+        );
       }
     });
   }
@@ -31,16 +33,25 @@ export default class DocumentController {
   getDocument(documentName, userUID) {
     const docTracker = DocumentTracker.getInstance();
 
-    if (documentName && fs.existsSync(this._documentsFolderURL)) {
-      const filePath = fileURLToPath(
-        new URL(
-          this._documentsFolderURL.pathname + "/" + documentName,
-          import.meta.url
-        )
-      );
+    const filePath = fileURLToPath(
+      new URL(
+        this._documentsFolderURL.pathname + "/" + documentName,
+        import.meta.url
+      )
+    );
 
+    // root path exists
+    if (documentName && fs.existsSync(this._documentsFolderURL)) {
       if (fs.existsSync(filePath)) {
-        var workbook = XLSX.readFile(filePath, { dense: true });
+        var workbook = undefined;
+
+        // if document has been loaded by someone else return cached data
+        if (docTracker.hasDocument(documentName)) {
+          workbook = docTracker.getDocumentData(documentName);
+        } else {
+          workbook = XLSX.readFile(filePath, { dense: true });
+          docTracker.addDocument(documentName, workbook);
+        }
 
         docTracker.addUser(documentName, userUID);
 
@@ -48,11 +59,21 @@ export default class DocumentController {
           name: documentName,
           sheetName: workbook.SheetNames[0],
           data: adaptToArray(workbook.Sheets[workbook.SheetNames[0]]),
-          users: docTracker.getUsers(documentName)
+          users: docTracker.getUsers(documentName),
         };
       } else {
-        throw new Error(`File, ${documentName}, does not exist.`);
+        console.error(`File, ${documentName}, does not exist.`);
       }
+    }
+  }
+
+  updateDocument(documentName, cellData) {
+    const docTracker = DocumentTracker.getInstance();
+
+    if (documentName && docTracker.hasDocument(documentName)) {
+      docTracker.updateDocument(documentName, cellData);
+    } else {
+      console.error("Unable to update document.");
     }
   }
 }
