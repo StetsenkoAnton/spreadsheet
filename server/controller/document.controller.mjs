@@ -8,9 +8,11 @@ import { adaptToArray } from "../utils/spreadsheet.adapter.mjs";
 
 export default class DocumentController {
   _documentsFolderURL = undefined;
+  _docTracker = DocumentTracker.getInstance();
 
   constructor() {
     this._documentsFolderURL = envUtils.getDocumentsPath();
+    this._docTracker = DocumentTracker.getInstance();
   }
 
   getDocuments() {
@@ -31,8 +33,6 @@ export default class DocumentController {
 
   // return first sheet of the workbook
   getDocument(documentName, userUID) {
-    const docTracker = DocumentTracker.getInstance();
-
     const filePath = fileURLToPath(
       new URL(
         this._documentsFolderURL.pathname + "/" + documentName,
@@ -46,20 +46,22 @@ export default class DocumentController {
         var workbook = undefined;
 
         // if document has been loaded by someone else return cached data
-        if (docTracker.hasDocument(documentName)) {
-          workbook = docTracker.getDocumentData(documentName);
+        if (this._docTracker.hasDocument(documentName)) {
+          workbook = this._docTracker.getDocumentData(documentName);
         } else {
           workbook = XLSX.readFile(filePath, { dense: true });
-          docTracker.addDocument(documentName, workbook);
+          this._docTracker.addDocument(documentName, workbook);
         }
 
-        docTracker.addUser(documentName, userUID);
+        this._docTracker.addUser(documentName, userUID);
 
         return {
           name: documentName,
           sheetName: workbook.SheetNames[0],
           data: adaptToArray(workbook.Sheets[workbook.SheetNames[0]]),
-          users: docTracker.getUsers(documentName),
+          users: this._docTracker.getUsers(documentName),
+          // focused cells
+          selectedList: this._docTracker.getFocussedCell(documentName)
         };
       } else {
         console.error(`File, ${documentName}, does not exist.`);
@@ -67,12 +69,28 @@ export default class DocumentController {
     }
   }
 
-  updateDocument(documentName, cellData) {
-    const docTracker = DocumentTracker.getInstance();
+  saveDocument(documentName) {
+    if (documentName && this._docTracker.hasDocument(documentName)) {
+      const workbook = this._docTracker.getDocumentData(documentName);
 
-    if (documentName && docTracker.hasDocument(documentName)) {
-      docTracker.updateDocument(documentName, cellData);
+      if (workbook) {
+        const filePath = fileURLToPath(
+          new URL(
+            this._documentsFolderURL.pathname + "/" + documentName,
+            import.meta.url
+          )
+        );
+
+        XLSX.writeFile(workbook, filePath);
+      }
+    }
+  }
+
+  updateDocument(documentName, cellData) {
+    if (documentName && this._docTracker.hasDocument(documentName)) {
+      this._docTracker.updateDocument(documentName, cellData);
     } else {
+      // todo: reread file data???
       console.error("Unable to update document.");
     }
   }
