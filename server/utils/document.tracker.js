@@ -17,14 +17,17 @@ var DocumentTracker = function () {
   this.addUser = (documentName, userUID) => {
     if (documentName && userUID) {
       if (this._documentUserMap.has(documentName)) {
-        const users = this._documentUserMap.get(documentName);
+        let users = this._documentUserMap.get(documentName);
 
         if (users && users.indexOf(userUID) === -1) {
           users.push(userUID);
+          this._documentUserMap.set(documentName, users);
         }
       } else {
+        var users = [];
+        users.push(userUID);
         // add document to map with the first user
-        this._documentUserMap.set(documentName, [userUID]);
+        this._documentUserMap.set(documentName, users);
       }
     } else {
       throw new Error(
@@ -68,10 +71,9 @@ var DocumentTracker = function () {
     }
   };
 
-
   /**
    * Keep documents in the map
-   */  
+   */
 
   // add document
   this.addDocument = (documentName, data) => {
@@ -128,10 +130,13 @@ var DocumentTracker = function () {
       if (this._documentsMap.has(documentName)) {
         const workbook = this._documentsMap.get(documentName);
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        sheet['!data'][cellData.row][cellData.col] = {t: 's', v: cellData.value };
+        sheet["!data"][cellData.row][cellData.col] = {
+          t: "s",
+          v: cellData.value,
+        };
 
         workbook.Sheets[workbook.SheetNames[0]] = sheet;
-        this._documentUserMap.set(documentName, workbook);
+        this._documentsMap.set(documentName, workbook);
       }
     } else {
       throw new Error(

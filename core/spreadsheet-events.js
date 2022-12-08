@@ -1,11 +1,12 @@
 export const SEVENTS = {
   CELL: {
+    // backend listen, front send
     // cell is focused
     FOCUS: "CELL_FOCUS",
-    // cell lost focus 
-    FOCUS_LOST: "CELL_FOCUS_LOST",
     // save changed value of the cell
     SAVE: "CELL_SAVE",
+    // front listen, server send
+    // cell unfocused on save
     SAVED: "CELL_SAVED",
     FOCUSED: "CELL_FOCUSED",
   },
