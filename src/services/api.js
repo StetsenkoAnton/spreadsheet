@@ -3,7 +3,8 @@ import { SEVENTS } from "../../core/spreadsheet-events";
 
 const userID = Date.now();
 console.log("userID", userID);
-const serverRoot = "http://localhost:3000";
+// const serverRoot = "http://localhost:3000";
+const serverRoot = "";
 const serverPath = `${serverRoot}/api/v1/`;
 
 const socket = io(serverRoot);
@@ -37,6 +38,9 @@ export function streamSelectedCell(body) {
 export function streamUpdatedCell(body) {
   streamSend(SEVENTS.CELL.SAVE, body);
 }
+export function streamSavedFile() {
+  streamSend(SEVENTS.DOCUMENT.SAVED);
+}
 function apiRequest(path) {
   const options = {
     headers: {
@@ -51,12 +55,8 @@ function apiRequest(path) {
     });
 }
 export function getAllFiles() {
-  alert('getAllFiles');
   return apiRequest(`${serverPath}document`)
-    .then((response) => {
-      alert(response);
-      return response;
-    })
+    .then((response) => response)
     .catch((error) => {
       throw new Error(error);
     });

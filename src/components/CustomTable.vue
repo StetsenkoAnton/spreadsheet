@@ -3,6 +3,7 @@
     <div>Font size: <input type="number" v-model.number="fontSize" />px</div>
     <hr />
     <button type="button" @click="clearFilters">Reset filters</button>
+    <button type="button" @click="saveFile">Save</button>
     <table class="table">
       <CustomTableHeaderRow
         :data-table="dataTable"
@@ -120,6 +121,9 @@ export default {
     },
     onUnselected(e) {
       this.$emit("cellUpdated", e);
+    },
+    saveFile() {
+      this.$emit("saveFile");
     },
   },
 };

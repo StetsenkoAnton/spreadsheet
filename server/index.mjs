@@ -26,12 +26,7 @@ const indexFile = new URL(`${rootFolder}/index.html`, import.meta.url);
 
 if (isProd) {
   app.use(express.static(path.join(__dirname, `/${rootFolder}`)));
-  app.use(
-    cors({
-      origin: "*",
-      credentials: true,
-    })
-  );
+
 } else {
   app.use(
     cors({

@@ -6,6 +6,7 @@
       :selected-list="selectedList"
       @cellSelected="onCellSelected"
       @cellUpdated="onCellUpdated"
+      @saveFile="onSaveFile"
     />
     <p v-else>{{ emptyText }}</p>
   </div>
@@ -15,6 +16,7 @@
 import CustomTable from "@/components/CustomTable.vue";
 import {
   getTable,
+  streamSavedFile,
   streamSelectedCell,
   streamUpdatedCell,
   subscribeFocusEv,
@@ -125,7 +127,6 @@ export default {
   },
   methods: {
     onCellSelected(val) {
-      console.log("cellSelected", val);
       streamSelectedCell({
         ...val,
         tableName: this.tableName,
@@ -133,12 +134,14 @@ export default {
       });
     },
     onCellUpdated(val) {
-      console.log("cellUpdated", val);
       streamUpdatedCell({
         ...val,
         tableName: this.tableName,
         sheetName: this.sheetName,
       });
+    },
+    onSaveFile() {
+      streamSavedFile();
     },
     cellUpdate({ row, col, value }) {
       this.rawTable[row].row[col].value = value;
@@ -150,7 +153,6 @@ export default {
         return;
       }
       const table = await getTable(name);
-      console.log(table);
       this.tableName = table.name;
       this.sheetName = table.sheetName;
       this.rawTable = table.data;
@@ -158,5 +160,3 @@ export default {
   },
 };
 </script>
-
-<style></style>
