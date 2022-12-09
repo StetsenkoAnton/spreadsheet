@@ -5,6 +5,7 @@ const documentController = new DocumentController();
 
 function onFocusCell(socket, data) {
   documentController.addFocussedCell(data.tableName, data);
+  data.selectedList = documentController.getFocussedCell(data.tableName);
   socket.broadcast.emit(SEVENTS.CELL.FOCUSED, data);
 }
 
@@ -12,6 +13,7 @@ function onSaveCell(socket, data) {
   // TODO: update
   documentController.updateDocument(data.tableName, data);
   documentController.removeFocussedCell(data.tableName, data);
+  data.selectedList = documentController.getFocussedCell(data.tableName);
   socket.broadcast.emit(SEVENTS.CELL.SAVED, data);
 }
 

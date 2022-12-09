@@ -110,4 +110,12 @@ export default class DocumentController {
       console.error("Unable to remove Focussed Cell.");
     }
   }
+
+  getFocussedCell(documentName) {
+    if (documentName) {
+      return this._docTracker.getFocussedCell(documentName);
+    } else {
+      console.error("Unable to remove Focussed Cell.");
+    }
+  }
 }

@@ -67,6 +67,7 @@ app.use("/api/v1", API_V_1);
 app.get("*", (req, res) => {
   res.sendFile(fileURLToPath(indexFile));
 });
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -85,6 +86,7 @@ function getIp() {
   const ip4 = interfacesArr.find((el) => el.family === 'IPv4' && !el.internal);
   return ip4.address;
 }
+
 server.listen(3000, () => {
   console.log("listening on http://localhost:3000");
   console.log(`listening on http://${getIp()}:3000`);
