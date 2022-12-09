@@ -4,6 +4,8 @@
     <hr />
     <button type="button" @click="clearFilters">Reset filters</button>
     <button type="button" @click="saveFile">Save</button>
+    <span> </span>
+    <span>{{ tableName }}</span>
     <table class="table">
       <CustomTableHeaderRow
         :data-table="dataTable"
@@ -47,16 +49,17 @@ export default {
         return [];
       },
     },
+    tableName: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
       fontSize: 16,
       sortColumn: 0,
       sortDirection: "", // "abc", "zyx"
-      filtersSettings: [
-        // { column: 1, search: "Tagcat", isExact: true },
-        // { column: 2, search: "ina", isExact: false },
-      ],
+      filtersSettings: [],
     };
   },
   computed: {
