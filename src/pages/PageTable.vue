@@ -16,7 +16,7 @@
 import CustomTable from "@/components/CustomTable.vue";
 import {
   getTable,
-  streamSavedFile,
+  streamSaveFile,
   streamSelectedCell,
   streamUpdatedCell,
   subscribeFocusEv,
@@ -141,7 +141,7 @@ export default {
       });
     },
     onSaveFile() {
-      streamSavedFile();
+      streamSaveFile({tableName: this.tableName, sheetName: this.sheetName});
     },
     cellUpdate({ row, col, value }) {
       this.rawTable[row].row[col].value = value;

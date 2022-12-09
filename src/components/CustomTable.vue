@@ -122,8 +122,8 @@ export default {
     onUnselected(e) {
       this.$emit("cellUpdated", e);
     },
-    saveFile() {
-      this.$emit("saveFile");
+    saveFile(e) {
+      this.$emit("saveFile", e);
     },
   },
 };
