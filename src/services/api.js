@@ -51,8 +51,12 @@ function apiRequest(path) {
     });
 }
 export function getAllFiles() {
+  alert('getAllFiles');
   return apiRequest(`${serverPath}document`)
-    .then((response) => response)
+    .then((response) => {
+      alert(response);
+      return response;
+    })
     .catch((error) => {
       throw new Error(error);
     });

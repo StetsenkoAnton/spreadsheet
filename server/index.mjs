@@ -10,6 +10,7 @@ import path from "path";
 import express from "express";
 import cookieSession from "cookie-session";
 import crypto from "crypto";
+import os from "os";
 import API_V_1 from "./api/index.router.mjs";
 import registerEvents from "./utils/websocket.handler.mjs";
 
@@ -21,9 +22,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 const devCors = ["http://127.0.0.1:5173", "http://localhost:5173"];
+const indexFile = new URL(`${rootFolder}/index.html`, import.meta.url);
 
 if (isProd) {
   app.use(express.static(path.join(__dirname, `/${rootFolder}`)));
+  app.use(
+    cors({
+      origin: "*",
+      credentials: true,
+    })
+  );
 } else {
   app.use(
     cors({
@@ -61,7 +69,9 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/v1", API_V_1);
-
+app.get("*", (req, res) => {
+  res.sendFile(fileURLToPath(indexFile));
+});
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -74,6 +84,13 @@ io.on("connection", (socket) => {
   registerEvents(io, socket);
 });
 
+function getIp() {
+  const interfaces = os.networkInterfaces();
+  const interfacesArr = Object.values(interfaces).flat();
+  const ip4 = interfacesArr.find((el) => el.family === 'IPv4' && !el.internal);
+  return ip4.address;
+}
 server.listen(3000, () => {
   console.log("listening on http://localhost:3000");
+  console.log(`listening on http://${getIp()}:3000`);
 });
