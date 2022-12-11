@@ -19,7 +19,7 @@
     >
       <div class="card-body">
         <div
-          v-if="filter.search"
+          v-if="isCurrentFilter"
           class="row align-items-center justify-content-between mb-2"
         >
           <div class="col-auto">
@@ -130,11 +130,12 @@ export default {
       handleOutsideClick: () => {},
       isExact: false,
       showFilterModal: false,
-      filter: {
+      filterDefault: {
         column: this.columnInfo.index,
         search: "",
         isExact: false,
       },
+      filter: {...this.filterDefault},
     };
   },
   computed: {
@@ -192,6 +193,7 @@ export default {
     },
     resetValueFilter() {
       if (this.isCurrentFilter) this.filter = { ...this.currentFilter };
+      else this.filter = { ...this.filterDefault};
     },
   },
 };
