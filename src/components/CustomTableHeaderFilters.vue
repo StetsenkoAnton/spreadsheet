@@ -1,39 +1,81 @@
 <template>
   <div class="header-cell__filter">
     <button
-      :class="{ 'header-cell__filter-btn--active': isCurrentFilter }"
+      :class="`btn btn-sm ${
+        isCurrentFilter ? 'btn-warning' : 'btn-outline-secondary'
+      }`"
       ref="opener"
       type="button"
       @click="openFilters"
     >
-      Filter
+      <i class="icon icon-filter" />
       <span v-show="isCurrentFilter">{{ filteredOrderView }}</span>
     </button>
-    <div v-show="showFilterModal" class="header-cell__filter-modal" ref="modal">
-      <div v-show="isCurrentFilter" class="flex-between">
-        <span>{{ filteredOrderView }} priority</span>
-        <button type="button" @click="resetFilter">Reset</button>
-      </div>
-      <input
-        type="search"
-        ref="search"
-        placeholder="search"
-        v-model="filter.search"
-        :list="`datalistOptions${columnInfo.index}`"
-        @keydown.enter="applyFilter"
-        @keydown.esc="canselFilter"
-      />
-      <datalist :id="`datalistOptions${columnInfo.index}`">
-        <option v-for="val in unicValues" :key="val" :value="val"></option>
-      </datalist>
+    <div
+      v-show="showFilterModal"
+      :style="{ width: '240px' }"
+      class="card header-cell__filter-modal"
+      ref="modal"
+    >
+      <div class="card-body">
+        <div
+          v-if="filter.search"
+          class="row align-items-center justify-content-between mb-2"
+        >
+          <div class="col-auto">
+            {{ filteredOrderView }}
+            <span class="small">пріоритет</span>
+          </div>
+          <div class="col-auto">
+            <button class="btn btn-warning" type="button" @click="resetFilter">
+              Скинути
+            </button>
+          </div>
+        </div>
+        <input
+          class="form-control"
+          type="search"
+          ref="search"
+          placeholder="Пошук"
+          v-model="filter.search"
+          :list="`datalistOptions${columnInfo.index}`"
+          @keydown.enter="applyFilter"
+          @keydown.esc="canselFilter"
+        />
+        <datalist :id="`datalistOptions${columnInfo.index}`">
+          <option v-for="val in unicValues" :key="val" :value="val"></option>
+        </datalist>
 
-      <label>
-        <input type="checkbox" v-model="filter.isExact" />
-        <span>Exact</span>
-      </label>
-      <div class="flex-between">
-        <button type="button" @click="applyFilter">Ok</button>
-        <button type="button" @click="canselFilter">Cansel</button>
+        <div class="form-check mb-2">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            v-model="filter.isExact"
+            :id="`exactFilter${columnInfo.index}`"
+          />
+          <label
+            class="form-check-label"
+            :for="`exactFilter${columnInfo.index}`"
+          >
+            точний
+          </label>
+        </div>
+        <div class="row justify-content-end">
+          <div class="col col-auto">
+            <button
+              class="btn btn-outline-secondary"
+              type="button"
+              @click="canselFilter"
+            >
+              Відміна
+            </button>
+          </div>
+          <div class="col col-auto">
+            <button class="btn btn-primary" type="button" @click="applyFilter">
+              Ok
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -43,7 +85,6 @@
 import clickOutside from "../services/clickOutside";
 
 export default {
-  //
   props: {
     dataTable: {
       type: Array,
@@ -125,7 +166,7 @@ export default {
       document.addEventListener("click", this.handleOutsideClick);
       this.$nextTick(() => {
         this.$refs.search.focus();
-      })
+      });
     },
     applyFilter() {
       this.closeFilter();
@@ -170,9 +211,9 @@ export default {
   z-index: 1;
   top: -2em;
   left: 0;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
+  //box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
   background: #fff;
-  padding: 5px;
-  text-align: left;
+  //padding: 5px;
+  //text-align: left;
 }
 </style>

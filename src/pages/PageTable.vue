@@ -1,12 +1,33 @@
 <template>
-  <div>
+  <div class="container-fluid">
+    <div class="row justify-content-between">
+      <div class="col-auto">
+        <div class="d-flex gap-2 align-items-center">
+          <RouterLink class="btn btn-primary" to="/" title="На головну">
+            <i class="icon icon-chevron-left" />
+          </RouterLink>
+          <div class="fs-3 d-flex gap-2 align-items-center">
+            <i class="icon icon-file-excel text-success" />
+            {{ tableName }}
+          </div>
+          <ServerStatus />
+        </div>
+      </div>
+      <div class="col-auto">
+        <BtnSaveDocument
+          v-if="tableName"
+          :table-name="tableName"
+          :sheet-name="sheetName"
+        />
+      </div>
+    </div>
+
     <CustomTable
       v-if="dataTable.length"
       :data-table="dataTable"
       :table-name="tableName"
       @cellSelected="onCellSelected"
       @cellUpdated="onCellUpdated"
-      @saveFile="onSaveFile"
     />
     <p v-else>{{ emptyText }}</p>
   </div>
@@ -14,19 +35,23 @@
 
 <script>
 import CustomTable from "@/components/CustomTable.vue";
+import BtnSaveDocument from "@/components/BtnSaveDocument.vue";
 import {
   getTable,
-  streamSaveFile,
   streamSelectedCell,
   streamUpdatedCell,
   subscribeFocusEv,
   subscribeUpdateEv,
 } from "@/services/api.js";
+// import { selected, table } from "@/pages/mock.js";
+import ServerStatus from "@/components/ServerStatus.vue";
 
 export default {
   name: "PageCustom",
   components: {
+    ServerStatus,
     CustomTable,
+    BtnSaveDocument,
   },
   mounted() {
     this.getTableFile();
@@ -35,9 +60,11 @@ export default {
     return {
       fontSize: 16,
       emptyText: "Loading...",
+      // selectedList: selected,
       selectedList: [],
       tableName: "",
       sheetName: "",
+      // rawTable: table,
       rawTable: [],
     };
   },
@@ -76,9 +103,6 @@ export default {
         sheetName: this.sheetName,
       });
     },
-    onSaveFile() {
-      streamSaveFile({ tableName: this.tableName, sheetName: this.sheetName });
-    },
     cellUpdate({ row, col, value, selectedList }) {
       this.rawTable[row].row[col].value = value;
       this.selectedList = selectedList;
@@ -86,7 +110,7 @@ export default {
     async getTableFile() {
       const name = this.$route.query.file;
       if (!name) {
-        this.emptyText = "File not found";
+        this.emptyText = "Файл не знайдено";
         return;
       }
       const table = await getTable(name);

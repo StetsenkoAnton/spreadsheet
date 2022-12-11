@@ -1,13 +1,12 @@
 <template>
   <div :class="cellClass" tabindex="-1" ref="cell" @dblclick="cellEdit">
-    <input
+    <textarea
       v-if="status === 'edit'"
       class="table-cell__input"
-      type="text"
       v-model="cellRaw"
       ref="input"
+      rows="auto"
       @blur="cellRest"
-      @keydown.enter="cellRest"
       @keydown.esc="cellRest"
     />
     <span>{{ cellValue.value }}</span>
@@ -50,8 +49,8 @@ export default {
     cellClass() {
       return {
         "table-cell": true,
-        "table-cell--edit": this.status === STATUS.edit,
-        "table-cell--selected": this.cellValue.selected,
+        "position-relative": this.status === STATUS.edit,
+        "border border-dark bg-secondary bg-gradient text-white": this.cellValue.selected,
       };
     },
   },
@@ -91,13 +90,16 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .table-cell__input {
   position: absolute;
   top: 0;
-  bottom: 0;
   left: 0;
   border-color: transparent;
+  white-space: pre;
+  resize: both;
+  min-width: calc(100% + 2em);
+  min-height: calc(100% + 2em);
 }
 .table-cell__input:focus,
 .table-cell__input:focus-visible {
@@ -106,18 +108,13 @@ export default {
 }
 .table-cell {
   height: 100%;
-  border: 2px solid transparent;
+  white-space: pre;
 }
 .table-cell:focus-visible,
 .table-cell:focus {
-  border-color: dodgerblue;
+  box-shadow: inset 0 0 0 2px dodgerblue;
 }
 .table-cell--edit {
   position: relative;
 }
-.table-cell--selected {
-  border-color: darkseagreen;
-  background: lightgrey;
-}
-
 </style>

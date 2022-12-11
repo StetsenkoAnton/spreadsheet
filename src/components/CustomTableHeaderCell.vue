@@ -1,12 +1,22 @@
 <template>
-  <div class="header-cell">
-    <div></div>
-    <button class="header-cell__sort" type="button" @click="onSort">
-      {{ columnInfo.name }}
-      <template v-if="sortInfo.column === columnInfo.index">
-        <span v-if="sortInfo.direction === 'abc'">&#8595;</span>
-        <span v-if="sortInfo.direction === 'zyx'">&#8593;</span>
-      </template>
+  <div
+    class="position-relative d-flex flex-nowrap align-items-center justify-content-between"
+  >
+    <button
+      class="btn btn-sm w-100 d-flex align-items-center justify-content-start gap-2"
+      type="button"
+      @click="onSort"
+    >
+      <b>{{ columnInfo.name }}</b>
+      <i
+        :class="[
+          'icon',
+          `icon-sort-amount-${sortInfo.direction || 'asc'}`,
+          sortInfo.column === columnInfo.index && sortInfo.direction
+            ? ''
+            : 'invisible',
+        ]"
+      />
     </button>
     <CustomTableHeaderFilters
       :column-info="columnInfo"
@@ -21,7 +31,7 @@
 <script>
 import CustomTableHeaderFilters from "@/components/CustomTableHeaderFilters.vue";
 
-const sortLine = ["abc", "zyx", ""];
+const sortLine = ["asc", "desc", ""];
 export default {
   components: { CustomTableHeaderFilters },
   props: {
@@ -91,13 +101,4 @@ export default {
 };
 </script>
 
-<style>
-.header-cell {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-}
-.header-cell__sort {
-  display: flex;
-}
-</style>
+<style></style>

@@ -1,12 +1,40 @@
 <template>
   <div>
-    <div>Font size: <input type="number" v-model.number="fontSize" />px</div>
-    <hr />
-    <button type="button" @click="clearFilters">Reset filters</button>
-    <button type="button" @click="saveFile">Save</button>
-    <span> </span>
-    <span>{{ tableName }}</span>
-    <table class="table">
+    <hr class="mb-1 mt-2" />
+    <div class="row">
+      <div class="col-auto">
+        <div class="row">
+          <div class="col-auto">
+            <button
+              type="button"
+              class="btn btn-sm btn-warning"
+              :disabled="!filtersSettings.length"
+              @click="clearFilters"
+            >
+              Скинути фільтри
+            </button>
+          </div>
+          <div class="col-auto">
+            <div
+              class="input-group input-group-sm d-flex align-items-center gap-1"
+              title="Розмір шрифту"
+            >
+              <i class="icon icon-text-height" />
+              <select class="form-select" v-model.number="fontSize">
+                <option value="8">8</option>
+                <option value="10">10</option>
+                <option value="12">12</option>
+                <option value="14">14</option>
+                <option value="16">16</option>
+                <option value="18">18</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr class="mt-1 mb-0" />
+    <table class="table table-bordered table-hover">
       <CustomTableHeaderRow
         :data-table="dataTable"
         :filter-info="filtersSettings"
@@ -16,9 +44,9 @@
       />
       <tbody :style="{ fontSize: `${fontSize}px` }">
         <tr v-for="{ lineNumber, row } in visibleTable" :key="lineNumber">
-          <th class="table__th">
-            {{ lineNumber + 1 }}
-          </th>
+          <td class="bg-light pt-0 pb-0">
+            <b>{{ lineNumber + 1 }}</b>
+          </td>
           <td v-for="cell in row" :key="cell.column" class="table__td">
             <CustomTableCell
               :cell-value="cell"
@@ -81,9 +109,9 @@ export default {
         const bNormalize =
           typeof bVal === "number" ? bVal : bVal.toString().toUpperCase();
         if (aNormalize > bNormalize) {
-          return this.sortDirection === "abc" ? -1 : 1;
+          return this.sortDirection === "asc" ? 1 : -1;
         }
-        return this.sortDirection === "abc" ? 1 : -1;
+        return this.sortDirection === "asc" ? -1 : 1;
       });
     },
     sortInfo() {
@@ -125,9 +153,6 @@ export default {
     onUnselected(e) {
       this.$emit("cellUpdated", e);
     },
-    saveFile(e) {
-      this.$emit("saveFile", e);
-    },
   },
 };
 </script>
@@ -136,19 +161,12 @@ export default {
 .table {
   width: 100%;
   height: 1px;
-  border: 1px solid;
+  //border: 1px solid;
   border-collapse: collapse;
 }
-.table__th,
 .table__td {
-  border: 1px solid;
-}
-.table__td {
-  padding: 0;
+  padding: 0 !important;
   text-align: center;
   height: 100%;
-}
-* {
-  font-size: inherit;
 }
 </style>

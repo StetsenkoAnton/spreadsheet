@@ -1,5 +1,5 @@
 <template>
-  <thead>
+  <thead class="table-light">
     <tr>
       <th />
       <th v-for="val in headerList" :key="val" class="table__th">

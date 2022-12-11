@@ -3,18 +3,11 @@ import { SEVENTS } from "../../core/spreadsheet-events";
 
 const userID = Date.now();
 console.log("userID", userID);
-// const serverRoot = "http://localhost:3000";
-const serverRoot = "";
+const serverRoot =
+  import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
 const serverPath = `${serverRoot}/api/v1/`;
 
 const socket = io(serverRoot);
-socket.on("connect", () => {
-  console.log("connect", socket.id);
-});
-
-socket.on("disconnect", () => {
-  console.error("disconnect WS server");
-});
 
 export function streamGet(name, cb, fileName) {
   socket.on(name, (e) => {
@@ -27,6 +20,20 @@ export function subscribeFocusEv(cb, fileName) {
 }
 export function subscribeUpdateEv(cb, fileName) {
   streamGet(SEVENTS.CELL.SAVED, cb, fileName);
+}
+export function subscribeDocumentSavedEv(cb, fileName) {
+  streamGet(SEVENTS.DOCUMENT.SAVED, cb, fileName);
+}
+export function subscribeServerEv(cb) {
+  socket.on("connect", () => {
+    console.log("connect", socket.id);
+    cb(true);
+  });
+
+  socket.on("disconnect", () => {
+    console.error("disconnect WS server");
+    cb(false);
+  });
 }
 export function streamSend(name, body) {
   console.log("send", name, body);
