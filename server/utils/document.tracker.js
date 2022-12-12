@@ -49,6 +49,14 @@ var DocumentTracker = function () {
           );
         }
       }
+
+      // remove document if not watched
+      if (
+        !this._documentUserMap.has(documentName) ||
+        this._documentUserMap.get(documentName).length === 0
+      ) {
+        this._documentsMap.delete(documentName);
+      }
     } else {
       throw new Error(
         `DocumentName: ${documentName} and UserUID: ${userUID} can not be null, undefined or empty string.`
@@ -130,10 +138,15 @@ var DocumentTracker = function () {
       if (this._documentsMap.has(documentName)) {
         const workbook = this._documentsMap.get(documentName);
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        sheet["!data"][cellData.row][cellData.col] = {
+
+        let cell = sheet["!data"][cellData.row][cellData.col] || {
           t: "s",
-          v: cellData.value,
+          v: undefined,
         };
+
+        cell.v = cellData.value;
+
+        sheet["!data"][cellData.row][cellData.col] = cell;
 
         workbook.Sheets[workbook.SheetNames[0]] = sheet;
         this._documentsMap.set(documentName, workbook);
