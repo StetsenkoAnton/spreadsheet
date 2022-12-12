@@ -25,11 +25,13 @@ function _adaptToArray(spreadsheet) {
             rowData.row.push({
               value: row[ci][VALUE_KEY],
               column: ci,
+              selected: false,
             });
           } else {
             rowData.row.push({
               value: "",
               column: ci,
+              selected: false,
             });
           }
         }

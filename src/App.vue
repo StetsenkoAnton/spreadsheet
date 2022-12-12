@@ -10,9 +10,3 @@ export default {
   components: { RouterView },
 };
 </script>
-
-<style>
-body {
-  padding-top: 15px;
-}
-</style>

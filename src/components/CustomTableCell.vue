@@ -29,7 +29,8 @@ export default {
       default() {
         return {
           value: "",
-          id: "0",
+          column: "0",
+          selected: false,
         };
       },
     },
@@ -39,6 +40,9 @@ export default {
     },
   },
   emits: ["input", "selected", "unselected"],
+  updated() {
+    console.log('updated')
+  },
   data() {
     return {
       status: STATUS.rest,
@@ -50,7 +54,7 @@ export default {
       return {
         "table-cell": true,
         "position-relative": this.status === STATUS.edit,
-        "border border-dark bg-secondary bg-gradient text-white": this.cellValue.selected,
+        "bg-secondary bg-gradient text-white": this.cellValue.selected,
       };
     },
   },

@@ -1,63 +1,68 @@
 <template>
-  <div>
-    <hr class="mb-1 mt-2" />
-    <div class="row">
-      <div class="col-auto">
-        <div class="row">
-          <div class="col-auto">
-            <button
-              type="button"
-              class="btn btn-sm btn-warning"
-              :disabled="!filtersSettings.length"
-              @click="clearFilters"
-            >
-              Скинути фільтри
-            </button>
-          </div>
-          <div class="col-auto">
-            <div
-              class="input-group input-group-sm d-flex align-items-center gap-1"
-              title="Розмір шрифту"
-            >
-              <i class="icon icon-text-height" />
-              <select class="form-select" v-model.number="fontSize">
-                <option value="8">8</option>
-                <option value="10">10</option>
-                <option value="12">12</option>
-                <option value="14">14</option>
-                <option value="16">16</option>
-                <option value="18">18</option>
-              </select>
+  <div class="table-component">
+    <div class="table-component__actions">
+      <hr class="mb-1 mt-2" />
+      <div class="row">
+        <div class="col-auto">
+          <div class="row">
+            <div class="col-auto">
+              <button
+                type="button"
+                class="btn btn-sm btn-warning"
+                :disabled="!filtersSettings.length"
+                @click="clearFilters"
+              >
+                Скинути фільтри
+              </button>
+            </div>
+            <div class="col-auto">
+              <div
+                class="input-group input-group-sm d-flex align-items-center gap-1"
+                title="Розмір шрифту"
+              >
+                <i class="icon icon-text-height" />
+                <select class="form-select" v-model.number="fontSize">
+                  <option value="8">8</option>
+                  <option value="10">10</option>
+                  <option value="12">12</option>
+                  <option value="14">14</option>
+                  <option value="16">16</option>
+                  <option value="18">18</option>
+                </select>
+              </div>
+              <span>{{ rowByPercent }}</span>
             </div>
           </div>
         </div>
       </div>
+      <hr class="mt-1 mb-0" />
     </div>
-    <hr class="mt-1 mb-0" />
-    <table class="table table-bordered table-hover">
-      <CustomTableHeaderRow
-        :data-table="dataTable"
-        :filter-info="filtersSettings"
-        :sort-info="sortInfo"
-        @sorted="onSort"
-        @filtered="onFilter"
-      />
-      <tbody :style="{ fontSize: `${fontSize}px` }">
-        <tr v-for="{ lineNumber, row } in visibleTable" :key="lineNumber">
-          <td class="bg-light pt-0 pb-0">
-            <b>{{ lineNumber + 1 }}</b>
-          </td>
-          <td v-for="cell in row" :key="cell.column" class="table__td">
-            <CustomTableCell
-              :cell-value="cell"
-              :line-number="lineNumber"
-              @selected="onSelected"
-              @unselected="onUnselected"
-            />
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div ref="tableBox" class="table-component__box">
+      <table class="table table-bordered table-hover mb-0">
+        <CustomTableHeaderRow
+          :data-table="dataTable"
+          :filter-info="filtersSettings"
+          :sort-info="sortInfo"
+          @sorted="onSort"
+          @filtered="onFilter"
+        />
+        <tbody :style="{ fontSize: `${fontSize}px` }">
+          <tr v-for="{ lineNumber, row } in visibleTable" :key="lineNumber">
+            <td class="bg-light pt-0 pb-0">
+              <b>{{ lineNumber + 1 }}</b>
+            </td>
+            <td v-for="cell in row" :key="cell.column" class="table__td">
+              <CustomTableCell
+                :cell-value="cell"
+                :line-number="lineNumber"
+                @selected="onSelected"
+                @unselected="onUnselected"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -82,12 +87,18 @@ export default {
       default: "",
     },
   },
+  mounted() {
+    // this.getMaxRows();
+    // this.$refs.tableBox.addEventListener("scroll", this.onScroll);
+  },
   data() {
     return {
       fontSize: 16,
       sortColumn: 0,
       sortDirection: "", // "abc", "zyx"
       filtersSettings: [],
+      maxRows: 0,
+      // visibleTable: [],
     };
   },
   computed: {
@@ -120,6 +131,21 @@ export default {
         direction: this.sortDirection,
       };
     },
+    rowByPercent() {
+      if (!this.maxRows) return 0;
+      return Math.round(
+        (this.sortedTable.length - this.maxRows) / this.maxRows
+      );
+    },
+  },
+  watch: {
+    // maxRows(newRows) {
+    //   console.log(this.sortedTable.length, newRows);
+    //   if (!newRows) this.visibleTable = [];
+    //   else if (this.sortedTable.length <= newRows)
+    //     this.visibleTable = this.sortedTable;
+    //   else this.visibleTable = this.sortedTable.slice(0, newRows);
+    // },
   },
   methods: {
     clearFilters() {
@@ -153,16 +179,37 @@ export default {
     onUnselected(e) {
       this.$emit("cellUpdated", e);
     },
+    // getMaxRows() {
+    //   const tableHeight = this.$refs.tableBox.offsetHeight;
+    //   const maxRows = (tableHeight / (this.fontSize * 1.56)) * 3;
+    //   this.maxRows = Math.round(maxRows);
+    // },
+    // onScroll(e) {
+    //   const boxH = e.target.offsetHeight;
+    //   const scrollH = e.target.scrollHeight;
+    //   const scrollT = e.target.scrollTop;
+    //   const scrollPercent = Math.round((scrollT / (scrollH - boxH)) * 100);
+    //   const window = scrollPercent * this.rowByPercent;
+    //   // console.log(window, window + this.maxRows);
+    //   this.visibleTable = this.sortedTable.slice(window, window + this.maxRows);
+    // },
   },
 };
 </script>
 
-<style>
-.table {
-  width: 100%;
-  height: 1px;
-  //border: 1px solid;
-  border-collapse: collapse;
+<style lang="scss" scoped>
+.table-component {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas: "actions" "box";
+}
+.table-component__actions {
+  grid-area: actions;
+}
+.table-component__box {
+  grid-area: box;
+  overflow: auto;
 }
 .table__td {
   padding: 0 !important;

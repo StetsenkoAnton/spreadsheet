@@ -211,11 +211,9 @@ export default {
 .header-cell__filter-modal {
   position: absolute;
   z-index: 1;
-  top: -2em;
+  top: 0;
   left: 0;
-  //box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
   background: #fff;
-  //padding: 5px;
-  //text-align: left;
 }
 </style>

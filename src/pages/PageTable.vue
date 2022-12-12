@@ -1,6 +1,6 @@
 <template>
-  <div class="container-fluid">
-    <div class="row justify-content-between">
+  <main class="container-fluid page-stretch">
+    <div class="page-header row justify-content-between">
       <div class="col-auto">
         <div class="d-flex gap-2 align-items-center">
           <RouterLink class="btn btn-primary" to="/" title="На головну">
@@ -23,14 +23,15 @@
     </div>
 
     <CustomTable
-      v-if="dataTable.length"
-      :data-table="dataTable"
+      class="page-table"
+      v-if="rawTable.length"
+      :data-table="rawTable"
       :table-name="tableName"
       @cellSelected="onCellSelected"
       @cellUpdated="onCellUpdated"
     />
     <p v-else>{{ emptyText }}</p>
-  </div>
+  </main>
 </template>
 
 <script>
@@ -69,15 +70,15 @@ export default {
     };
   },
   computed: {
-    dataTable() {
-      const table = JSON.parse(JSON.stringify(this.rawTable));
-      if (!table.length) return [];
-      if (!this.selectedList.length) return table;
-      this.selectedList.forEach(({ row, col }) => {
-        table[row].row[col].selected = true;
-      });
-      return table;
-    },
+    // dataTable() {
+    //   const table = this.rawTable;
+    //   if (!table.length) return [];
+    //   if (!this.selectedList.length) return table;
+    //   this.selectedList.forEach(({ row, col }) => {
+    //     table[row].row[col].selected = true;
+    //   });
+    //   return table;
+    // },
   },
   watch: {
     tableName(newName) {
@@ -86,6 +87,20 @@ export default {
         this.selectedList = e.selectedList;
       }, newName);
       subscribeUpdateEv(this.cellUpdate, newName);
+    },
+    selectedList(newList, oldList) {
+      // unselected
+      if (oldList.length) {
+        oldList.forEach(({ row, col }) => {
+          this.rawTable[row].row[col].selected = false;
+        });
+      }
+      // selected
+      if (newList.length) {
+        newList.forEach(({ row, col }) => {
+          this.rawTable[row].row[col].selected = true;
+        });
+      }
     },
   },
   methods: {
@@ -122,3 +137,22 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.page-stretch {
+  height: 100vh;
+  padding-top: 15px;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas: "header" "table";
+  overflow: hidden;
+}
+.page-header {
+  grid-area: header;
+}
+.page-table {
+  grid-area: table;
+  overflow: hidden;
+}
+</style>
