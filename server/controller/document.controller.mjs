@@ -82,6 +82,7 @@ export default class DocumentController {
         );
 
         XLSX.writeFile(workbook, filePath);
+        this._docTracker.removeDocument(documentName);
       }
     }
   }
