@@ -30,7 +30,6 @@
                   <option value="18">18</option>
                 </select>
               </div>
-              <span>{{ rowByPercent }}</span>
             </div>
           </div>
         </div>
@@ -131,12 +130,12 @@ export default {
         direction: this.sortDirection,
       };
     },
-    rowByPercent() {
-      if (!this.maxRows) return 0;
-      return Math.round(
-        (this.sortedTable.length - this.maxRows) / this.maxRows
-      );
-    },
+    // rowByPercent() {
+    //   if (!this.maxRows) return 0;
+    //   return Math.round(
+    //     (this.sortedTable.length - this.maxRows) / this.maxRows
+    //   );
+    // },
   },
   watch: {
     // maxRows(newRows) {
@@ -159,7 +158,7 @@ export default {
         const cellNormalize = row[filtersSettings.column].value
           .toString()
           .toUpperCase();
-        if (list.isExact) return searchNormalize === cellNormalize;
+        if (filtersSettings.isExact) return searchNormalize === cellNormalize;
         return cellNormalize.includes(searchNormalize);
       });
     },
