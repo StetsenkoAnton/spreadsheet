@@ -29,7 +29,7 @@ function _adaptToArray(spreadsheet) {
             });
           } else {
             rowData.row.push({
-              value: "",
+              value: " ",
               column: ci,
               selected: false,
             });
