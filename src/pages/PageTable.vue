@@ -69,17 +69,6 @@ export default {
       rawTable: [],
     };
   },
-  computed: {
-    // dataTable() {
-    //   const table = this.rawTable;
-    //   if (!table.length) return [];
-    //   if (!this.selectedList.length) return table;
-    //   this.selectedList.forEach(({ row, col }) => {
-    //     table[row].row[col].selected = true;
-    //   });
-    //   return table;
-    // },
-  },
   watch: {
     tableName(newName) {
       if (!newName) return;

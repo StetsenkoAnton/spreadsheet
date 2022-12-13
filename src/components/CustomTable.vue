@@ -30,7 +30,6 @@
                   <option value="18">18</option>
                 </select>
               </div>
-              <span>{{ rowByPercent }}</span>
             </div>
           </div>
         </div>
@@ -88,17 +87,18 @@ export default {
     },
   },
   mounted() {
-    // this.getMaxRows();
-    // this.$refs.tableBox.addEventListener("scroll", this.onScroll);
+    this.getMaxRows();
+    this.$refs.tableBox.addEventListener("scroll", this.throttleScroll);
   },
   data() {
     return {
       fontSize: 16,
       sortColumn: 0,
-      sortDirection: "", // "abc", "zyx"
+      sortDirection: "",
       filtersSettings: [],
       maxRows: 0,
-      // visibleTable: [],
+      visibleTable: [],
+      throttleScroll: this.throttle(this.onScroll, 66),
     };
   },
   computed: {
@@ -110,7 +110,7 @@ export default {
       });
       return filteredTable;
     },
-    visibleTable() {
+    sortedTable() {
       if (!this.sortDirection) return this.filteredTable;
       return [...this.filteredTable].sort((a, b) => {
         const aVal = a.row[this.sortColumn].value;
@@ -139,13 +139,12 @@ export default {
     },
   },
   watch: {
-    // maxRows(newRows) {
-    //   console.log(this.sortedTable.length, newRows);
-    //   if (!newRows) this.visibleTable = [];
-    //   else if (this.sortedTable.length <= newRows)
-    //     this.visibleTable = this.sortedTable;
-    //   else this.visibleTable = this.sortedTable.slice(0, newRows);
-    // },
+    maxRows(newRows) {
+      if (!newRows) this.visibleTable = [];
+      else if (this.sortedTable.length <= newRows)
+        this.visibleTable = this.sortedTable;
+      else this.visibleTable = this.sortedTable.slice(0, newRows);
+    },
   },
   methods: {
     clearFilters() {
@@ -179,20 +178,41 @@ export default {
     onUnselected(e) {
       this.$emit("cellUpdated", e);
     },
-    // getMaxRows() {
-    //   const tableHeight = this.$refs.tableBox.offsetHeight;
-    //   const maxRows = (tableHeight / (this.fontSize * 1.56)) * 3;
-    //   this.maxRows = Math.round(maxRows);
-    // },
-    // onScroll(e) {
-    //   const boxH = e.target.offsetHeight;
-    //   const scrollH = e.target.scrollHeight;
-    //   const scrollT = e.target.scrollTop;
-    //   const scrollPercent = Math.round((scrollT / (scrollH - boxH)) * 100);
-    //   const window = scrollPercent * this.rowByPercent;
-    //   // console.log(window, window + this.maxRows);
-    //   this.visibleTable = this.sortedTable.slice(window, window + this.maxRows);
-    // },
+    getMaxRows() {
+      const tableHeight = this.$refs.tableBox.offsetHeight;
+      const maxRows = (tableHeight / (this.fontSize * 1.56)) * 3;
+      this.maxRows = Math.round(maxRows);
+    },
+    onScroll(e) {
+      const boxH = e.target.offsetHeight;
+      const scrollH = e.target.scrollHeight;
+      const scrollT = e.target.scrollTop;
+      const scrollPercent = Math.round((scrollT / (scrollH - boxH)) * 100);
+      const window = scrollPercent * this.rowByPercent;
+      const windowStart = window < 0 ? 0 : window;
+      const windowStopRaw = window + this.maxRows;
+      const windowStop =
+        windowStopRaw > this.sortedTable.length
+          ? this.sortedTable.length
+          : windowStopRaw;
+      console.log(windowStart, windowStop);
+      this.visibleTable = this.sortedTable.slice(windowStart, windowStop);
+    },
+    throttle(func, time = 33) {
+      let inThrottle;
+      return function () {
+        // eslint-disable-next-line prefer-rest-params
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+          func.apply(context, args);
+          inThrottle = true;
+          setTimeout(() => {
+            inThrottle = false;
+          }, time);
+        }
+      };
+    },
   },
 };
 </script>
