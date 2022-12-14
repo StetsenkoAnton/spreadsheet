@@ -56,29 +56,20 @@ export default {
   },
   mounted() {
     this.getTableFile();
+    // setTimeout(() => {
+    //   this.rawTable = table;
+    //   this.selectedList = selected;
+    // }, 1000);
   },
   data() {
     return {
       fontSize: 16,
-      emptyText: "Loading...",
-      // selectedList: selected,
-      selectedList: [],
+      emptyText: "Читання файлу...",
       tableName: "",
       sheetName: "",
-      // rawTable: table,
+      selectedList: [],
       rawTable: [],
     };
-  },
-  computed: {
-    // dataTable() {
-    //   const table = this.rawTable;
-    //   if (!table.length) return [];
-    //   if (!this.selectedList.length) return table;
-    //   this.selectedList.forEach(({ row, col }) => {
-    //     table[row].row[col].selected = true;
-    //   });
-    //   return table;
-    // },
   },
   watch: {
     tableName(newName) {

@@ -26,10 +26,11 @@ export default {
   name: "PageHome",
   async mounted() {
     this.fileList = await getAllFiles();
+    // this.fileList = [{ name: "sasdasd" }, { name: "sasdasds" }];
   },
   data() {
     return {
-      fileList: [{ name: "sasdasd" }, { name: "sasdasds" }],
+      fileList: [],
     };
   },
 };

@@ -47,7 +47,7 @@ export default {
   emits: ["sorted", "filtered"],
   computed: {
     headerLength() {
-      return this.dataTable[0].row.length;
+      return this.dataTable.length ? this.dataTable[0].row.length : 0;
     },
     headerList() {
       const arr = [];
