@@ -44,7 +44,7 @@ import {
   subscribeFocusEv,
   subscribeUpdateEv,
 } from "@/services/api.js";
-// import { selected, table } from "@/pages/mock.js";
+import { selected, tableBig } from "@/pages/mock.js";
 import ServerStatus from "@/components/ServerStatus.vue";
 
 export default {
@@ -55,18 +55,21 @@ export default {
     BtnSaveDocument,
   },
   mounted() {
-    this.getTableFile();
+    // this.getTableFile();
+    setTimeout(() => {
+      this.rawTable = tableBig;
+    }, 1000);
   },
   data() {
     return {
       fontSize: 16,
-      emptyText: "Loading...",
-      // selectedList: selected,
-      selectedList: [],
+      emptyText: "Читання файлу...",
+      selectedList: selected,
+      // selectedList: [],
       tableName: "",
       sheetName: "",
-      // rawTable: table,
       rawTable: [],
+      // rawTable: [],
     };
   },
   watch: {
@@ -77,7 +80,7 @@ export default {
       }, newName);
       subscribeUpdateEv(this.cellUpdate, newName);
     },
-    selectedList(newList, oldList) {
+    selectedList(newList, oldList) {``
       // unselected
       if (oldList.length) {
         oldList.forEach(({ row, col }) => {

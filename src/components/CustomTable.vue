@@ -36,9 +36,13 @@
       </div>
       <hr class="mt-1 mb-0" />
     </div>
-    <div ref="tableBox" class="table-component__box">
+    <div
+      ref="tableBox"
+      :class="['table-component__box', invisible ? 'table--invisible' : '']"
+    >
       <table class="table table-bordered table-hover mb-0">
         <CustomTableHeaderRow
+          ref="thead"
           :data-table="dataTable"
           :filter-info="filtersSettings"
           :sort-info="sortInfo"
@@ -46,6 +50,7 @@
           @filtered="onFilter"
         />
         <tbody :style="{ fontSize: `${fontSize}px` }">
+          <tr :style="{ height: `${firstRowH}px` }"></tr>
           <tr v-for="{ lineNumber, row } in visibleTable" :key="lineNumber">
             <td class="bg-light pt-0 pb-0">
               <b>{{ lineNumber + 1 }}</b>
@@ -59,6 +64,7 @@
               />
             </td>
           </tr>
+          <tr :style="{ height: `${lastRowH}px` }"></tr>
         </tbody>
       </table>
     </div>
@@ -68,6 +74,9 @@
 <script>
 import CustomTableHeaderRow from "@/components/CustomTableHeaderRow.vue";
 import CustomTableCell from "@/components/CustomTableCell.vue";
+
+const rowHeightK = 1.75;
+const invisibleRows = 10;
 
 export default {
   components: {
@@ -87,18 +96,25 @@ export default {
     },
   },
   mounted() {
-    this.getMaxRows();
     this.$refs.tableBox.addEventListener("scroll", this.throttleScroll);
+    this.$nextTick(() => {
+      this.getVisibleRows();
+    });
+  },
+  beforeUnmount() {
+    this.$refs.tableBox.removeEventListener("scroll", this.throttleScroll);
   },
   data() {
     return {
+      invisible: false,
       fontSize: 16,
       sortColumn: 0,
       sortDirection: "",
       filtersSettings: [],
-      maxRows: 0,
-      visibleTable: [],
-      throttleScroll: this.throttle(this.onScroll, 66),
+      visibleRows: 0,
+      tableHeadH: 0,
+      renderedStartRow: 0,
+      throttleScroll: this.throttle(this.onScroll, 100),
     };
   },
   computed: {
@@ -125,25 +141,44 @@ export default {
         return this.sortDirection === "asc" ? -1 : 1;
       });
     },
+    visibleTable() {
+      if (!this.renderedStartRow && !this.renderedEndRow) return [];
+      return this.sortedTable.slice(this.renderedStartRow, this.renderedEndRow);
+    },
     sortInfo() {
       return {
         column: this.sortColumn,
         direction: this.sortDirection,
       };
     },
-    // rowByPercent() {
-    //   if (!this.maxRows) return 0;
-    //   return Math.round(
-    //     (this.sortedTable.length - this.maxRows) / this.maxRows
-    //   );
-    // },
+    rowH() {
+      return this.fontSize * rowHeightK;
+    },
+    tableH() {
+      return this.rowH * this.allRows;
+    },
+    allRows() {
+      return this.sortedTable.length;
+    },
+    renderedRows() {
+      return this.visibleRows + invisibleRows;
+    },
+    invisibleTopH() {
+      return ((invisibleRows / 2) * this.rowH) + this.tableHeadH;
+    },
+    firstRowH() {
+      return this.renderedStartRow * this.rowH;
+    },
+    lastRowH() {
+      return (this.allRows - this.renderedEndRow) * this.rowH;
+    },
+    renderedEndRow() {
+      return Math.min(this.renderedStartRow + this.renderedRows, this.allRows);
+    },
   },
   watch: {
-    maxRows(newRows) {
-      if (!newRows) this.visibleTable = [];
-      else if (this.sortedTable.length <= newRows)
-        this.visibleTable = this.sortedTable;
-      else this.visibleTable = this.sortedTable.slice(0, newRows);
+    fontSize() {
+      this.getVisibleRows();
     },
   },
   methods: {
@@ -178,25 +213,18 @@ export default {
     onUnselected(e) {
       this.$emit("cellUpdated", e);
     },
-    getMaxRows() {
-      const tableHeight = this.$refs.tableBox.offsetHeight;
-      const maxRows = (tableHeight / (this.fontSize * 1.56)) * 3;
-      this.maxRows = Math.round(maxRows);
+    getVisibleRows() {
+      const tableH = this.$refs.tableBox.offsetHeight;
+      const tableHeadH = this.$refs.thead.$el.offsetHeight;
+      this.visibleRows = Math.round((tableH - tableHeadH) / (this.fontSize * rowHeightK));
+      this.tableHeadH = Math.round(tableHeadH);
     },
     onScroll(e) {
-      const boxH = e.target.offsetHeight;
-      const scrollH = e.target.scrollHeight;
       const scrollT = e.target.scrollTop;
-      const scrollPercent = Math.round((scrollT / (scrollH - boxH)) * 100);
-      const window = scrollPercent * this.rowByPercent;
-      const windowStart = window < 0 ? 0 : window;
-      const windowStopRaw = window + this.maxRows;
-      const windowStop =
-        windowStopRaw > this.sortedTable.length
-          ? this.sortedTable.length
-          : windowStopRaw;
-      console.log(windowStart, windowStop);
-      this.visibleTable = this.sortedTable.slice(windowStart, windowStop);
+      this.renderedStartRow = Math.max(
+        0,
+        Math.floor((scrollT - this.invisibleTopH) / this.rowH)
+      );
     },
     throttle(func, time = 33) {
       let inThrottle;
@@ -231,9 +259,12 @@ export default {
   grid-area: box;
   overflow: auto;
 }
+.table--invisible {
+  visibility: hidden;
+}
 .table__td {
   padding: 0 !important;
   text-align: center;
-  height: 100%;
+  height: 1.75em;
 }
 </style>

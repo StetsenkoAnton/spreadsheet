@@ -111,7 +111,7 @@ export default {
   outline: none;
 }
 .table-cell {
-  height: 100%;
+  //height: 100%;
   white-space: pre;
 }
 .table-cell:focus-visible,
