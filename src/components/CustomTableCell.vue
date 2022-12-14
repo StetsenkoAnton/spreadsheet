@@ -14,7 +14,6 @@
 </template>
 
 <script>
-
 const STATUS = {
   rest: "",
   edit: "edit",
@@ -40,9 +39,6 @@ export default {
     },
   },
   emits: ["input", "selected", "unselected"],
-  updated() {
-    console.log('updated')
-  },
   data() {
     return {
       status: STATUS.rest,
@@ -54,7 +50,7 @@ export default {
       return {
         "table-cell": true,
         "position-relative": this.status === STATUS.edit,
-        "bg-secondary bg-gradient text-white": this.cellValue.selected,
+        "bg-secondary text-white": this.cellValue.selected,
       };
     },
   },
@@ -79,9 +75,9 @@ export default {
         value,
       };
     },
-    onChange() {
-      this.$emit("input", this.getRequestDate(this.cellRaw));
-    },
+    // onChange() {
+    //   this.$emit("input", this.getRequestDate(this.cellRaw));
+    // },
     onSelect() {
       this.$emit("selected", this.getRequestDate(this.cellValue.value));
     },
@@ -111,8 +107,8 @@ export default {
   outline: none;
 }
 .table-cell {
-  //height: 100%;
   white-space: pre;
+  height: 100%;
 }
 .table-cell:focus-visible,
 .table-cell:focus {
