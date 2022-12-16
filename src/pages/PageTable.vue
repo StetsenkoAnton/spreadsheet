@@ -44,7 +44,7 @@ import {
   subscribeFocusEv,
   subscribeUpdateEv,
 } from "@/services/api.js";
-// import { selected, table } from "@/pages/mock.js";
+import { selected, table } from "@/pages/mock.js";
 import ServerStatus from "@/components/ServerStatus.vue";
 
 export default {
@@ -55,11 +55,12 @@ export default {
     BtnSaveDocument,
   },
   mounted() {
-    this.getTableFile();
-    // setTimeout(() => {
-    //   this.rawTable = table;
-    //   this.selectedList = selected;
-    // }, 1000);
+    if (import.meta.env.MODE === "development") {
+      setTimeout(() => {
+        this.rawTable = table;
+        this.selectedList = selected;
+      }, 1000);
+    } else this.getTableFile();
   },
   data() {
     return {

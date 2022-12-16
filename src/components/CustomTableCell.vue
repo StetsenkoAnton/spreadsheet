@@ -8,6 +8,8 @@
       rows="auto"
       @blur="cellRest"
       @keydown.esc="cellRest"
+      @keydown.exact.enter="cellRest"
+      @keydown.exact.ctrl.enter="onEnter"
     />
     <span>{{ cellValue.value }}</span>
   </div>
@@ -86,6 +88,9 @@ export default {
       cell.value = this.cellRaw;
       this.$emit("unselected", this.getRequestDate(this.cellRaw));
     },
+    onEnter() {
+      this.cellRaw = `${this.cellRaw}\n`;
+    },
   },
 };
 </script>
@@ -109,6 +114,7 @@ export default {
 .table-cell {
   white-space: pre;
   height: 100%;
+  padding: 0 2px;
 }
 .table-cell:focus-visible,
 .table-cell:focus {

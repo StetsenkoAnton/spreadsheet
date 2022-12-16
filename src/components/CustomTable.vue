@@ -43,7 +43,7 @@
       <table class="table table-bordered table-hover mb-0">
         <CustomTableHeaderRow
           ref="thead"
-          :data-table="dataTable"
+          :data-table="filteredTable"
           :filter-info="filtersSettings"
           :sort-info="sortInfo"
           @sorted="onSort"
@@ -154,9 +154,9 @@ export default {
     rowH() {
       return this.fontSize * rowHeightK;
     },
-    tableH() {
-      return this.rowH * this.allRows;
-    },
+    // tableH() {
+    //   return this.rowH * this.allRows;
+    // },
     allRows() {
       return this.sortedTable.length;
     },
@@ -227,16 +227,19 @@ export default {
       );
     },
     throttle(func, time = 33) {
-      let inThrottle;
+      let lastArgs = null;
+      let inThrottle = false;
       return function () {
         // eslint-disable-next-line prefer-rest-params
-        const args = arguments;
+        lastArgs = arguments;
         const context = this;
         if (!inThrottle) {
-          func.apply(context, args);
+          func.apply(context, lastArgs);
           inThrottle = true;
           setTimeout(() => {
             inThrottle = false;
+            // TODO can call twice
+            func.apply(context, lastArgs);
           }, time);
         }
       };

@@ -1,5 +1,5 @@
 <template>
-  <main class="container">
+  <main class="container pt-5">
     <h3>
       <i class="icon icon-folder-open" :style="{ color: '#ffc107' }" />
       Список файлів
@@ -25,8 +25,9 @@ import { getAllFiles } from "../services/api";
 export default {
   name: "PageHome",
   async mounted() {
-    this.fileList = await getAllFiles();
-    // this.fileList = [{ name: "sasdasd" }, { name: "sasdasds" }];
+    if (import.meta.env.MODE === "development") {
+      this.fileList = [{ name: "first" }, { name: "second" }];
+    } else this.fileList = await getAllFiles();
   },
   data() {
     return {
