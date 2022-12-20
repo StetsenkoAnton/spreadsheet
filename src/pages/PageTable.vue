@@ -11,6 +11,8 @@
             {{ tableName }}
           </div>
           <ServerStatus />
+          <span>{{ double }}</span>
+          <span>{{ magicValue }}</span>
         </div>
       </div>
       <div class="col-auto">
@@ -35,6 +37,7 @@
 </template>
 
 <script>
+import { mapState } from "pinia";
 import CustomTable from "@/components/CustomTable.vue";
 import BtnSaveDocument from "@/components/BtnSaveDocument.vue";
 import {
@@ -46,6 +49,7 @@ import {
 } from "@/services/api.js";
 import { selected, table } from "@/pages/mock.js";
 import ServerStatus from "@/components/ServerStatus.vue";
+import { useTableStore } from "@/store/table.js";
 
 export default {
   name: "PageCustom",
@@ -55,6 +59,7 @@ export default {
     BtnSaveDocument,
   },
   mounted() {
+    console.log(this);
     if (import.meta.env.MODE === "development") {
       setTimeout(() => {
         this.rawTable = table;
@@ -66,11 +71,16 @@ export default {
     return {
       fontSize: 16,
       emptyText: "Читання файлу...",
-      tableName: "",
-      sheetName: "",
-      selectedList: [],
-      rawTable: [],
     };
+  },
+  computed: {
+    ...mapState(useTableStore, {
+      myOwnName: "count",
+      double: (store) => store.count * 2,
+      magicValue(store) {
+        return store.doubleCount + this.myOwnName + this.double;
+      },
+    }),
   },
   watch: {
     tableName(newName) {
