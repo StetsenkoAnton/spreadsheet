@@ -48,7 +48,7 @@ import { selected, table } from "@/pages/mock.js";
 import ServerStatus from "@/components/ServerStatus.vue";
 
 export default {
-  name: "PageCustom",
+  name: "PageTable",
   components: {
     ServerStatus,
     CustomTable,

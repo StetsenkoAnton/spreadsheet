@@ -43,6 +43,7 @@
       <table class="table table-bordered table-hover mb-0 position-relative">
         <CustomTableHeaderRow
           ref="thead"
+          :first-row="firstRow"
           :data-table="filteredTable"
           :filter-info="filtersSettings"
           :sort-info="sortInfo"
@@ -119,6 +120,9 @@ export default {
     };
   },
   computed: {
+    firstRow() {
+      return this.dataTable[0].row;
+    },
     filteredTable() {
       if (!this.filtersSettings.length) return this.dataTable;
       let filteredTable = this.dataTable;

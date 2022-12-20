@@ -32,6 +32,12 @@ export default {
         return [];
       },
     },
+    firstRow: {
+      type: Array,
+      default() {
+        return [];
+      },
+    },
     sortInfo: {
       type: Object,
       default() {
@@ -59,7 +65,7 @@ export default {
         arr.push({
           index: i - 1,
           name: this.getAlphabetLetter(i),
-          colName: this.dataTable[0].row[i - 1].value,
+          colName: this.firstRow[i - 1].value,
         });
       }
       return arr;
