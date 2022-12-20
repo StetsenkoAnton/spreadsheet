@@ -1,8 +1,12 @@
 <template>
-  <thead class="table-light">
+  <thead class="table-light thead--sticky">
     <tr>
-      <th />
-      <th v-for="val in headerList" :key="val" class="table__th">
+      <th class="table__th" />
+      <th
+        v-for="val in headerList"
+        :key="val"
+        class="table__th pb-1 position-relative"
+      >
         <CustomTableHeaderCell
           :column-info="val"
           :data-table="dataTable"
@@ -55,6 +59,7 @@ export default {
         arr.push({
           index: i - 1,
           name: this.getAlphabetLetter(i),
+          colName: this.dataTable[0].row[i - 1].value,
         });
       }
       return arr;
@@ -85,4 +90,10 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss">
+.thead--sticky {
+  position: sticky;
+  top: 0;
+  box-shadow: 0 2px 0 0 #ffc107;
+}
+</style>

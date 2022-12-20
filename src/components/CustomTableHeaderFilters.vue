@@ -2,7 +2,7 @@
   <div class="header-cell__filter">
     <button
       :class="`btn btn-sm ${
-        isCurrentFilter ? 'btn-warning' : 'btn-outline-secondary'
+        isCurrentFilter || isSorted ? 'btn-warning' : 'btn-outline-secondary'
       }`"
       ref="opener"
       type="button"
@@ -46,22 +46,42 @@
           <option v-for="val in unicValues" :key="val" :value="val"></option>
         </datalist>
 
-        <div class="form-check mb-2">
-          <input
-            class="form-check-input"
-            type="checkbox"
-            v-model="filter.isExact"
-            :id="`exactFilter${columnInfo.index}`"
-          />
-          <label
-            class="form-check-label"
-            :for="`exactFilter${columnInfo.index}`"
-          >
-            точний
-          </label>
+        <div class="row justify-content-between mt-1 mb-2">
+          <div class="col-auto">
+            <button
+              :class="`btn btn-sm btn-${isSorted ? '' : 'outline-'}success d-flex align-items-center justify-content-start gap-2`"
+              type="button"
+              @click="onSort"
+            >
+              <span>Сорт.</span>
+              <i
+                :class="[
+                  'icon',
+                  `icon-sort-amount-${sortInfo.direction || 'asc'}`,
+                  isSorted ? '' : 'invisible',
+                ]"
+              />
+            </button>
+          </div>
+          <div class="col-auto">
+            <div class="form-check mb-2">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                v-model="filter.isExact"
+                :id="`exactFilter${columnInfo.index}`"
+              />
+              <label
+                class="form-check-label"
+                :for="`exactFilter${columnInfo.index}`"
+              >
+                точний
+              </label>
+            </div>
+          </div>
         </div>
         <div class="row justify-content-end">
-          <div class="col col-auto">
+          <div class="col-auto">
             <button
               class="btn btn-outline-secondary"
               type="button"
@@ -83,6 +103,7 @@
 
 <script>
 import clickOutside from "../services/clickOutside";
+const sortLine = ["asc", "desc", ""];
 
 export default {
   props: {
@@ -117,7 +138,7 @@ export default {
       },
     },
   },
-  emits: ["filtered"],
+  emits: ["filtered", "sorted"],
   mounted() {
     this.handleOutsideClick = clickOutside(
       this.$refs.opener,
@@ -135,7 +156,7 @@ export default {
         search: "",
         isExact: false,
       },
-      filter: {...this.filterDefault},
+      filter: { ...this.filterDefault },
     };
   },
   computed: {
@@ -158,6 +179,12 @@ export default {
         ({ row }) => row[this.columnInfo.index].value
       );
       return new Set(list);
+    },
+    isSorted() {
+      return (
+        this.sortInfo.column === this.columnInfo.index &&
+        this.sortInfo.direction
+      );
     },
   },
   methods: {
@@ -193,7 +220,20 @@ export default {
     },
     resetValueFilter() {
       if (this.isCurrentFilter) this.filter = { ...this.currentFilter };
-      else this.filter = { ...this.filterDefault};
+      else this.filter = { ...this.filterDefault };
+    },
+    onSort() {
+      const directionIndex = sortLine.findIndex(
+        (dir) => dir === this.sortInfo.direction
+      );
+      const nextDirection =
+        directionIndex === sortLine.length - 1
+          ? sortLine[0]
+          : sortLine[directionIndex + 1];
+      this.$emit("sorted", {
+        column: this.columnInfo.index,
+        direction: nextDirection,
+      });
     },
   },
 };

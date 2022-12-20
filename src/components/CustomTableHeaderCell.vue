@@ -1,37 +1,24 @@
 <template>
   <div
-    class="position-relative d-flex flex-nowrap align-items-center justify-content-between"
+    class="d-flex flex-nowrap align-items-center justify-content-between pb-1"
   >
-    <button
-      class="btn btn-sm w-100 d-flex align-items-center justify-content-start gap-2"
-      type="button"
-      @click="onSort"
-    >
-      <b>{{ columnInfo.name }}</b>
-      <i
-        :class="[
-          'icon',
-          `icon-sort-amount-${sortInfo.direction || 'asc'}`,
-          sortInfo.column === columnInfo.index && sortInfo.direction
-            ? ''
-            : 'invisible',
-        ]"
-      />
-    </button>
+    <b>{{ columnInfo.name }}</b>
     <CustomTableHeaderFilters
       :column-info="columnInfo"
       :data-table="dataTable"
       :filter-info="filterInfo"
+      :sortInfo="sortInfo"
       @sorted="onSort"
       @filtered="onFilter"
     />
   </div>
+  <div class="fw-normal text-nowrap border-top">{{columnInfo.colName}}</div>
 </template>
 
 <script>
 import CustomTableHeaderFilters from "@/components/CustomTableHeaderFilters.vue";
 
-const sortLine = ["asc", "desc", ""];
+
 export default {
   components: { CustomTableHeaderFilters },
   props: {
@@ -66,24 +53,15 @@ export default {
       },
     },
   },
+  emits: ["filtered", "sorted"],
   data() {
     return {
       showFilterModal: false,
     };
   },
   methods: {
-    onSort() {
-      const directionIndex = sortLine.findIndex(
-        (dir) => dir === this.sortInfo.direction
-      );
-      const nextDirection =
-        directionIndex === sortLine.length - 1
-          ? sortLine[0]
-          : sortLine[directionIndex + 1];
-      this.$emit("sorted", {
-        column: this.columnInfo.index,
-        direction: nextDirection,
-      });
+    onSort(e) {
+      this.$emit("sorted", e);
     },
     onFilter(newValue) {
       this.$emit("filtered", newValue);

@@ -40,7 +40,7 @@
       ref="tableBox"
       :class="['table-component__box', invisible ? 'table--invisible' : '']"
     >
-      <table class="table table-bordered table-hover mb-0">
+      <table class="table table-bordered table-hover mb-0 position-relative">
         <CustomTableHeaderRow
           ref="thead"
           :data-table="filteredTable"
@@ -95,6 +95,7 @@ export default {
       default: "",
     },
   },
+  emits: ["cellUpdated", "cellSelected"],
   mounted() {
     this.$refs.tableBox.addEventListener("scroll", this.throttleScroll);
     this.$nextTick(() => {
