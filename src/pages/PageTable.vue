@@ -8,64 +8,46 @@
           </RouterLink>
           <div class="fs-3 d-flex gap-2 align-items-center">
             <i class="icon icon-file-excel text-success" />
-            {{ tableName }}
+            {{ fileName }}
           </div>
           <ServerStatus />
-          <span>{{ double }}</span>
-          <span>{{ magicValue }}</span>
         </div>
       </div>
       <div class="col-auto">
         <BtnSaveDocument
-          v-if="tableName"
-          :table-name="tableName"
+          v-if="fileName"
+          :table-name="fileName"
           :sheet-name="sheetName"
         />
       </div>
     </div>
 
-    <CustomTable
-      class="page-table"
-      v-if="rawTable.length"
-      :data-table="rawTable"
-      :table-name="tableName"
-      @cellSelected="onCellSelected"
-      @cellUpdated="onCellUpdated"
-    />
+    <TheTable class="page-table" v-if="rawTable.length" />
     <p v-else>{{ emptyText }}</p>
   </main>
 </template>
 
 <script>
-import { mapState } from "pinia";
-import CustomTable from "@/components/CustomTable.vue";
+import TheTable from "@/components/Table.vue";
 import BtnSaveDocument from "@/components/BtnSaveDocument.vue";
-import {
-  getTable,
-  streamSelectedCell,
-  streamUpdatedCell,
-  subscribeFocusEv,
-  subscribeUpdateEv,
-} from "@/services/api.js";
-import { selected, table } from "@/pages/mock.js";
 import ServerStatus from "@/components/ServerStatus.vue";
+import { mapState, mapActions } from "pinia";
 import { useTableStore } from "@/store/table.js";
+import { useFiltersStore } from "@/store/filters.js";
 
 export default {
   name: "PageCustom",
   components: {
     ServerStatus,
-    CustomTable,
+    TheTable,
     BtnSaveDocument,
   },
   mounted() {
-    console.log(this);
-    if (import.meta.env.MODE === "development") {
-      setTimeout(() => {
-        this.rawTable = table;
-        this.selectedList = selected;
-      }, 1000);
-    } else this.getTableFile();
+    this.getFile();
+  },
+  beforeUnmount() {
+    this.resetStoreFile();
+    this.resetStoreFilters();
   },
   data() {
     return {
@@ -74,67 +56,20 @@ export default {
     };
   },
   computed: {
-    ...mapState(useTableStore, {
-      myOwnName: "count",
-      double: (store) => store.count * 2,
-      magicValue(store) {
-        return store.doubleCount + this.myOwnName + this.double;
-      },
-    }),
-  },
-  watch: {
-    tableName(newName) {
-      if (!newName) return;
-      subscribeFocusEv((e) => {
-        this.selectedList = e.selectedList;
-      }, newName);
-      subscribeUpdateEv(this.cellUpdate, newName);
-    },
-    selectedList(newList, oldList) {
-      // unselected
-      if (oldList.length) {
-        oldList.forEach(({ row, col }) => {
-          this.rawTable[row].row[col].selected = false;
-        });
-      }
-      // selected
-      if (newList.length) {
-        newList.forEach(({ row, col }) => {
-          this.rawTable[row].row[col].selected = true;
-        });
-      }
-    },
+    ...mapState(useTableStore, ["fileName", "sheetName", "rawTable"]),
   },
   methods: {
-    onCellSelected(val) {
-      streamSelectedCell({
-        ...val,
-        tableName: this.tableName,
-        sheetName: this.sheetName,
-      });
-    },
-    onCellUpdated(val) {
-      streamUpdatedCell({
-        ...val,
-        tableName: this.tableName,
-        sheetName: this.sheetName,
-      });
-    },
-    cellUpdate({ row, col, value, selectedList }) {
-      this.rawTable[row].row[col].value = value;
-      this.selectedList = selectedList;
-    },
-    async getTableFile() {
+    ...mapActions(useTableStore, ["getTableFile", "resetStoreFile"]),
+    ...mapActions(useFiltersStore, ["resetStoreFilters"]),
+    getFile() {
       const name = this.$route.query.file;
       if (!name) {
-        this.emptyText = "Файл не знайдено";
+        this.emptyText = "Не вірний URL файлу";
         return;
       }
-      const table = await getTable(name);
-      this.tableName = table.name;
-      this.sheetName = table.sheetName;
-      this.rawTable = table.data;
-      this.selectedList = table.selectedList;
+      this.getTableFile(name).catch(() => {
+        this.emptyText = "Не можливо прочитати файл або такого файлу не існує";
+      });
     },
   },
 };

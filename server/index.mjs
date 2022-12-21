@@ -83,11 +83,12 @@ io.on("connection", (socket) => {
 function getIp() {
   const interfaces = os.networkInterfaces();
   const interfacesArr = Object.values(interfaces).flat();
-  const ip4 = interfacesArr.find((el) => el.family === 'IPv4' && !el.internal);
-  return ip4.address;
+  return interfacesArr.filter((el) => el.family === 'IPv4' && !el.internal).map((el) => el.address);
 }
 
 server.listen(3000, () => {
-  console.log("listening on http://localhost:3000");
-  console.log(`listening on http://${getIp()}:3000`);
+  const allIPs = ['localhost', ...getIp()];
+  allIPs.forEach((ip) => {
+    console.log(`listening on http://${ip}:3000`);
+  })
 });

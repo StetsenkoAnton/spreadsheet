@@ -107,12 +107,6 @@ const sortLine = ["asc", "desc", ""];
 
 export default {
   props: {
-    dataTable: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
     columnInfo: {
       type: Object,
       default() {
@@ -122,23 +116,7 @@ export default {
         };
       },
     },
-    sortInfo: {
-      type: Object,
-      default() {
-        return {
-          column: 0,
-          direction: "",
-        };
-      },
-    },
-    filterInfo: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
   },
-  emits: ["filtered", "sorted"],
   mounted() {
     this.handleOutsideClick = clickOutside(
       this.$refs.opener,

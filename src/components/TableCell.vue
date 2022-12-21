@@ -16,6 +16,9 @@
 </template>
 
 <script>
+import { mapActions } from "pinia";
+import { useTableStore } from "@/store/table.js";
+
 const STATUS = {
   rest: "",
   edit: "edit",
@@ -40,7 +43,6 @@ export default {
       default: 0,
     },
   },
-  emits: ["input", "selected", "unselected"],
   data() {
     return {
       status: STATUS.rest,
@@ -57,6 +59,7 @@ export default {
     },
   },
   methods: {
+    ...mapActions(useTableStore, ["cellUpdateSend", "cellSelectSend"]),
     cellRest() {
       this.status = STATUS.rest;
       this.onBlur();
@@ -77,16 +80,13 @@ export default {
         value,
       };
     },
-    // onChange() {
-    //   this.$emit("input", this.getRequestDate(this.cellRaw));
-    // },
     onSelect() {
-      this.$emit("selected", this.getRequestDate(this.cellValue.value));
+      this.cellSelectSend(this.getRequestDate(this.cellValue.value));
     },
     onBlur() {
       const cell = this.cellValue;
       cell.value = this.cellRaw;
-      this.$emit("unselected", this.getRequestDate(this.cellRaw));
+      this.cellUpdateSend(this.getRequestDate(this.cellRaw));
     },
     onEnter() {
       this.cellRaw = `${this.cellRaw}\n`;

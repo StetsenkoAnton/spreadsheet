@@ -7,59 +7,37 @@
         :key="val"
         class="table__th pb-1 position-relative"
       >
-        <CustomTableHeaderCell
-          :column-info="val"
-          :data-table="dataTable"
-          :filter-info="filterInfo"
-          :sort-info="sortInfo"
-          @sorted="onSort"
-          @filtered="onFilter"
-        />
+        <div
+          class="d-flex flex-nowrap align-items-center justify-content-between pb-1"
+        >
+          <b>{{ val.name }}</b>
+          <TableHeaderFilters v-if="false" :column-info="val" />
+        </div>
+        <div class="fw-normal text-nowrap border-top">{{ val.colName }}</div>
       </th>
     </tr>
   </thead>
 </template>
 
 <script>
-import CustomTableHeaderCell from "@/components/CustomTableHeaderCell.vue";
+import TableHeaderFilters from "@/components/TableHeaderFilters.vue";
+import { mapState } from "pinia";
+import { useTableStore } from "@/store/table.js";
 
 export default {
-  components: { CustomTableHeaderCell },
-  props: {
-    dataTable: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
-    sortInfo: {
-      type: Object,
-      default() {
-        return {
-          column: 0,
-          direction: "",
-        };
-      },
-    },
-    filterInfo: {
-      type: Array,
-      default() {
-        return [];
-      },
-    },
-  },
-  emits: ["sorted", "filtered"],
+  components: { TableHeaderFilters },
   computed: {
+    ...mapState(useTableStore, ["firstRow"]),
     headerLength() {
-      return this.dataTable.length ? this.dataTable[0].row.length : 0;
+      return this.firstRow.length;
     },
     headerList() {
       const arr = [];
-      for (let i = 1; i <= this.headerLength; i++) {
+      for (let i = 0; i < this.headerLength; i++) {
         arr.push({
-          index: i - 1,
-          name: this.getAlphabetLetter(i),
-          colName: this.dataTable[0].row[i - 1].value,
+          index: i,
+          name: this.getAlphabetLetter(i + 1),
+          colName: this.firstRow[i].value,
         });
       }
       return arr;
@@ -80,17 +58,14 @@ export default {
         : alphabet[alphLenght - 1];
       return `${firstLetter}${lastLetter}`;
     },
-    onSort(sort) {
-      this.$emit("sorted", sort);
-    },
-    onFilter(newValue) {
-      this.$emit("filtered", newValue);
-    },
   },
 };
 </script>
 
 <style lang="scss">
+.table__th {
+  vertical-align: top;
+}
 .thead--sticky {
   position: sticky;
   top: 0;
