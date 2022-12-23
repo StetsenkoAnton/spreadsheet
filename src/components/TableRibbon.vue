@@ -4,8 +4,8 @@
       <button
         type="button"
         class="btn btn-sm btn-warning"
-        :disabled="!filtersSettings.length"
-        @click="clearFilters"
+        :disabled="!filtersSettings.length && !sortSettings"
+        @click="resetStoreFilters"
       >
         Скинути фільтри
       </button>
@@ -32,24 +32,19 @@
 <script>
 import { mapState, mapActions } from "pinia";
 import { useRibbonStore } from "@/store/ribbon.js";
+import { useFiltersStore } from "@/store/filters.js";
 
 export default {
   name: "TableRibbon",
   computed: {
     ...mapState(useRibbonStore, ["fontSize"]),
-    filtersSettings() {
-      return [];
-    },
+    ...mapState(useFiltersStore, ["filtersSettings", "sortSettings"]),
   },
   methods: {
     ...mapActions(useRibbonStore, ["setStoreFontSize"]),
+    ...mapActions(useFiltersStore, ["resetStoreFilters"]),
     setFontSize(e) {
       this.setStoreFontSize(e.target.value);
-    },
-    clearFilters() {
-      this.filtersSettings = [];
-      this.sortColumn = 0;
-      this.sortDirection = "";
     },
   },
 };

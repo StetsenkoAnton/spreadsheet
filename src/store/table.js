@@ -5,8 +5,10 @@ import {
   subscribeUpdateEv,
   streamSelectedCell,
   streamUpdatedCell,
+  unSubscribeEv,
 } from "@/services/api.js";
 import { selected, table } from "@/pages/mock.js";
+import { SEVENTS } from "../../core/spreadsheet-events.js";
 
 export const useTableStore = defineStore("table", {
   state: () => ({
@@ -70,6 +72,7 @@ export const useTableStore = defineStore("table", {
       });
     },
     setSelectedList(newList) {
+      if (!this.rawTable.length) return;
       const oldList = this.selectedList;
       // unselected
       if (oldList.length) {
@@ -90,6 +93,8 @@ export const useTableStore = defineStore("table", {
       this.sheetName = "";
       this.rawTable = [];
       this.setSelectedList([]);
+      unSubscribeEv(SEVENTS.CELL.FOCUSED);
+      unSubscribeEv(SEVENTS.CELL.SAVED);
     },
   },
 });

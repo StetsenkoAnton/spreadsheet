@@ -15,6 +15,10 @@ export function streamGet(name, cb, fileName) {
     if (e.tableName === fileName) cb(e);
   });
 }
+
+export function unSubscribeEv(name) {
+  socket.removeAllListeners(name);
+}
 export function subscribeFocusEv(cb, fileName) {
   streamGet(SEVENTS.CELL.FOCUSED, cb, fileName);
 }

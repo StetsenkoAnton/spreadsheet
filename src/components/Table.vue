@@ -30,7 +30,7 @@ import { mapState } from "pinia";
 import { throttle } from "@/services/helpers.js";
 import TableHeaderRow from "@/components/TableHeaderRow.vue";
 import TableCell from "@/components/TableCell.vue";
-import { useTableStore } from "@/store/table.js";
+import { useFiltersStore } from "@/store/filters.js";
 import { useRibbonStore } from "@/store/ribbon.js";
 import TableRibbon from "@/components/TableRibbon.vue";
 
@@ -63,44 +63,12 @@ export default {
     };
   },
   computed: {
-    ...mapState(useTableStore, ["rawTable"]),
+    ...mapState(useFiltersStore, ["sortedTable"]),
     ...mapState(useRibbonStore, ["fontSize"]),
-    // filteredTable() {
-    //   if (!this.filtersSettings.length) return this.rawTable;
-    //   let filteredTable = this.rawTable;
-    //   this.filtersSettings.forEach((filtersSettings) => {
-    //     filteredTable = this.filterIteration(filtersSettings, filteredTable);
-    //   });
-    //   return filteredTable;
-    // },
-    // sortedTable() {
-    //   if (!this.sortDirection) return this.filteredTable;
-    //   return [...this.filteredTable].sort((a, b) => {
-    //     const aVal = a.row[this.sortColumn].value;
-    //     const bVal = b.row[this.sortColumn].value;
-    //     const aNormalize =
-    //       typeof aVal === "number" ? aVal : aVal.toString().toUpperCase();
-    //     const bNormalize =
-    //       typeof bVal === "number" ? bVal : bVal.toString().toUpperCase();
-    //     if (aNormalize > bNormalize) {
-    //       return this.sortDirection === "asc" ? 1 : -1;
-    //     }
-    //     return this.sortDirection === "asc" ? -1 : 1;
-    //   });
-    // },
-    sortedTable() {
-      return this.rawTable;
-    },
     visibleTable() {
       if (!this.renderedStartRow && !this.renderedEndRow) return [];
       return this.sortedTable.slice(this.renderedStartRow, this.renderedEndRow);
     },
-    // sortInfo() {
-    //   return {
-    //     column: this.sortColumn,
-    //     direction: this.sortDirection,
-    //   };
-    // },
     rowH() {
       return this.fontSize * rowHeightK;
     },
@@ -134,32 +102,6 @@ export default {
       this.sortColumn = 0;
       this.sortDirection = "";
     },
-    filterIteration(filtersSettings, list) {
-      return list.filter(({ row }) => {
-        const searchNormalize = filtersSettings.search.toUpperCase();
-        const cellNormalize = row[filtersSettings.column].value
-          .toString()
-          .toUpperCase();
-        if (filtersSettings.isExact) return searchNormalize === cellNormalize;
-        return cellNormalize.includes(searchNormalize);
-      });
-    },
-    // onSort({ column, direction }) {
-    //   this.sortColumn = column;
-    //   this.sortDirection = direction;
-    // },
-    // onFilter({ index, filter }) {
-    //   if (!filter) this.filtersSettings.splice(index, 1);
-    //   else if (index < 0 && filter.search.length)
-    //     this.filtersSettings.push(filter);
-    //   else this.filtersSettings[index] = filter;
-    // },
-    // onSelected(e) {
-    //   this.$emit("cellSelected", e);
-    // },
-    // onUnselected(e) {
-    //   this.$emit("cellUpdated", e);
-    // },
     getVisibleRows() {
       const tableH = this.$refs.tableBox.offsetHeight;
       const tableHeadH = this.$refs.thead.$el.offsetHeight;

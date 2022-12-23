@@ -11,7 +11,7 @@
           class="d-flex flex-nowrap align-items-center justify-content-between pb-1"
         >
           <b>{{ val.name }}</b>
-          <TableHeaderFilters v-if="false" :column-info="val" />
+          <TableFilter :column-info="val" />
         </div>
         <div class="fw-normal text-nowrap border-top">{{ val.colName }}</div>
       </th>
@@ -20,12 +20,12 @@
 </template>
 
 <script>
-import TableHeaderFilters from "@/components/TableHeaderFilters.vue";
+import TableFilter from "@/components/TableFilter.vue";
 import { mapState } from "pinia";
 import { useTableStore } from "@/store/table.js";
 
 export default {
-  components: { TableHeaderFilters },
+  components: { TableFilter },
   computed: {
     ...mapState(useTableStore, ["firstRow"]),
     headerLength() {
