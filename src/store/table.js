@@ -42,7 +42,6 @@ export const useTableStore = defineStore("table", {
             return table.name;
           })
           .then((fileName) => {
-            // TODO UNSUBSCRIBE !!!
             subscribeFocusEv((e) => {
               this.setSelectedList(e.selectedList);
             }, fileName);
