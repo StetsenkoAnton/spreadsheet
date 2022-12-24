@@ -36,7 +36,7 @@ import { useTableStore } from "@/store/table.js";
 import { useFiltersStore } from "@/store/filters.js";
 
 export default {
-  name: "PageCustom",
+  name: "PageTable",
   components: {
     ServerStatus,
     TheTable,
