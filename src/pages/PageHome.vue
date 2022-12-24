@@ -25,9 +25,10 @@ import { getAllFiles } from "../services/api";
 export default {
   name: "PageHome",
   async mounted() {
-    if (import.meta.env.MODE === "development") {
-      this.fileList = [{ name: "first" }, { name: "second" }];
-    } else this.fileList = await getAllFiles();
+    // if (import.meta.env.MODE === "development") {
+    //   this.fileList = [{ name: "first" }, { name: "second" }];
+    // } else this.fileList = await getAllFiles();
+    this.fileList = await getAllFiles();
   },
   data() {
     return {
