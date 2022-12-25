@@ -1,15 +1,18 @@
-export const throttle = (func, time = 33) => {
-  let inThrottle;
+export function throttle(func, time = 33) {
+  let lastArgs = null;
+  let inThrottle = false;
   return function () {
     // eslint-disable-next-line prefer-rest-params
-    const args = arguments;
+    lastArgs = arguments;
     const context = this;
     if (!inThrottle) {
-      func.apply(context, args);
+      func.apply(context, lastArgs);
       inThrottle = true;
       setTimeout(() => {
         inThrottle = false;
+        // TODO can call twice
+        func.apply(context, lastArgs);
       }, time);
     }
   };
-};
+}

@@ -60,8 +60,7 @@ export default {
       this.status = statuses.pending;
       streamSaveFile({ tableName: this.tableName, sheetName: this.sheetName });
     },
-    documentSaved(e) {
-      console.log(e);
+    documentSaved() {
       this.status = statuses.resolve;
       setTimeout(() => {
         this.status = statuses.rest;
