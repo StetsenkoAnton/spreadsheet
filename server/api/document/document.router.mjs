@@ -14,9 +14,11 @@ documentRouter
         next(error);
       });
   })
-  .get("/:name", (req, res) => {
+  .get("/:name", async (req, res) => {
     const documentController = new DocumentController();
-    res.json(documentController.getDocument(req.params.name, req.session.sid));
+    res.json(
+      await documentController.getDocument(req.params.name, req.session.sid)
+    );
   });
 
 export default documentRouter;
