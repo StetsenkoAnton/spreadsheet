@@ -137,19 +137,12 @@ var DocumentTracker = function () {
     if (documentName && cellData) {
       if (this._documentsMap.has(documentName)) {
         const workbook = this._documentsMap.get(documentName);
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const sheet = workbook.worksheets[0];
+        const row = sheet.getRow(cellData.row);
+        const col = row.getCell(cellData.col);
 
-        let cell = sheet["!data"][cellData.row][cellData.col] || {
-          t: "s",
-          v: undefined,
-        };
-
-        cell.v = cellData.value;
-
-        sheet["!data"][cellData.row][cellData.col] = cell;
-
-        workbook.Sheets[workbook.SheetNames[0]] = sheet;
-        this._documentsMap.set(documentName, workbook);
+        col.value = cellData.value;
+        // this._documentsMap.set(documentName, workbook);
       }
     } else {
       throw new Error(

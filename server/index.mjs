@@ -4,7 +4,6 @@ import cors from "cors";
 // import { createRequire } from 'node:module';
 import { Server } from "socket.io";
 import { default as http } from "http";
-import * as XLSX from "xlsx/xlsx.mjs";
 import * as fs from "fs";
 import path from "path";
 import express from "express";
@@ -16,8 +15,6 @@ import registerEvents from "./utils/websocket.handler.mjs";
 
 const isProd = process.env.NODE_ENV === "production";
 const rootFolder = "../dist";
-/* load 'fs' for readFile and writeFile support */
-XLSX.set_fs(fs);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
@@ -63,6 +60,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// use const for api version
 app.use("/api/v1", API_V_1);
 app.get("*", (req, res) => {
   res.sendFile(fileURLToPath(indexFile));

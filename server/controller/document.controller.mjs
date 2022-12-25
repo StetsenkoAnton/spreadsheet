@@ -1,10 +1,10 @@
 import fs from "fs";
 import { fileURLToPath } from "url";
-import XLSX from "xlsx/xlsx.mjs";
 
 import envUtils from "../env-utils.mjs";
 import DocumentTracker from "../utils/document.tracker.js";
 import { adaptToArray } from "../utils/spreadsheet.adapter.mjs";
+import XLSX from "exceljs";
 
 export default class DocumentController {
   _documentsFolderURL = undefined;
@@ -32,7 +32,7 @@ export default class DocumentController {
   }
 
   // return first sheet of the workbook
-  getDocument(documentName, userUID) {
+  async getDocument(documentName, userUID) {
     const filePath = fileURLToPath(
       new URL(
         this._documentsFolderURL.pathname + "/" + documentName,
@@ -43,33 +43,37 @@ export default class DocumentController {
     // root path exists
     if (documentName && fs.existsSync(this._documentsFolderURL)) {
       if (fs.existsSync(filePath)) {
-        var workbook = undefined;
-
         // if document has been loaded by someone else return cached data
-        if (this._docTracker.hasDocument(documentName)) {
-          workbook = this._docTracker.getDocumentData(documentName);
-        } else {
-          workbook = XLSX.readFile(filePath, { dense: true });
-          this._docTracker.addDocument(documentName, workbook);
+        if (!this._docTracker.hasDocument(documentName)) {
+          const newWorkbook = new XLSX.Workbook();
+          await newWorkbook.xlsx.readFile(filePath);
+          this._docTracker.addDocument(documentName, newWorkbook);
         }
 
-        this._docTracker.addUser(documentName, userUID);
+        const workbook = this._docTracker.getDocumentData(documentName);
 
-        return {
-          name: documentName,
-          sheetName: workbook.SheetNames[0],
-          data: adaptToArray(workbook.Sheets[workbook.SheetNames[0]]),
-          users: this._docTracker.getUsers(documentName),
-          // focused cells
-          selectedList: this._docTracker.getFocussedCell(documentName)
-        };
+        if (workbook && workbook.worksheets.length) {
+          this._docTracker.addUser(documentName, userUID);
+          const firstWorksheet = workbook.worksheets[0];
+
+          return {
+            name: documentName,
+            sheetName: firstWorksheet.name,
+            data: adaptToArray(firstWorksheet),
+            users: this._docTracker.getUsers(documentName),
+            // focused cells
+            selectedList: this._docTracker.getFocussedCell(documentName)
+          };
+        } else {
+          console.log("Workbook does not have any worksheets");
+        }
       } else {
         console.error(`File, ${documentName}, does not exist.`);
       }
     }
   }
 
-  saveDocument(documentName) {
+  async saveDocument(documentName) {
     if (documentName && this._docTracker.hasDocument(documentName)) {
       const workbook = this._docTracker.getDocumentData(documentName);
 
@@ -81,15 +85,15 @@ export default class DocumentController {
           )
         );
 
-        XLSX.writeFile(workbook, filePath);
-        this._docTracker.removeDocument(documentName);
+        return workbook.xlsx.writeFile(filePath);
       }
     }
   }
 
-  updateDocument(documentName, cellData) {
+  async updateDocument(documentName, cellData) {
     if (documentName && this._docTracker.hasDocument(documentName)) {
       this._docTracker.updateDocument(documentName, cellData);
+      return this.saveDocument(documentName);
     } else {
       // todo: reread file data???
       console.error("Unable to update document.");
