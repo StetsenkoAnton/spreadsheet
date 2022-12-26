@@ -22,17 +22,17 @@ export const useTableStore = defineStore("table", {
   },
   actions: {
     getTableFile(name) {
-      // if (import.meta.env.MODE === "development") {
-      //   return new Promise((resolve) => {
-      //     setTimeout(() => {
-      //       this.fileName = "Test name";
-      //       this.sheetName = "Test sheet name";
-      //       this.rawTable = table;
-      //       this.setSelectedList(selected);
-      //       resolve();
-      //     }, 1000);
-      //   });
-      // } else {
+      if (import.meta.env.MODE === "development") {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            this.fileName = "Test name";
+            this.sheetName = "Test sheet name";
+            this.rawTable = table;
+            this.setSelectedList(selected);
+            resolve();
+          }, 1000);
+        });
+      } else {
         return getTable(name)
           .then((table) => {
             this.fileName = table.name;
@@ -50,7 +50,7 @@ export const useTableStore = defineStore("table", {
           .catch((error) => {
             throw new Error(error);
           });
-      // }
+      }
     },
     cellUpdateGet({ row, col, value, selectedList }) {
       this.rawTable[row].row[col].value = value;
