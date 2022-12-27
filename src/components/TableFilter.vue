@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import clickOutside from "../services/clickOutside";
+import { clickOutside } from "../services/helpers";
 import TableFilterModal from "@/components/TableFilterModal.vue";
 import { mapState } from "pinia";
 import { useFiltersStore } from "@/store/filters.js";

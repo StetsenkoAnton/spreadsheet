@@ -1,11 +1,9 @@
 import { defineStore } from "pinia";
 import {
   getTable,
-  subscribeFocusEv,
-  subscribeUpdateEv,
-  streamSelectedCell,
-  streamUpdatedCell,
   unSubscribeEv,
+  subscribeEv,
+  streamSend,
 } from "@/services/api.js";
 import { selected, table } from "@/pages/mock.js";
 import { SEVENTS } from "../../core/spreadsheet-events.js";
@@ -42,10 +40,14 @@ export const useTableStore = defineStore("table", {
             return table.name;
           })
           .then((fileName) => {
-            subscribeFocusEv((e) => {
-              this.setSelectedList(e.selectedList);
-            }, fileName);
-            subscribeUpdateEv(this.cellUpdateGet, fileName);
+            subscribeEv(
+              SEVENTS.CELL.FOCUSED,
+              (e) => {
+                this.setSelectedList(e.selectedList);
+              },
+              fileName
+            );
+            subscribeEv(SEVENTS.CELL.SAVED, this.cellUpdateGet, fileName);
           })
           .catch((error) => {
             throw new Error(error);
@@ -57,14 +59,14 @@ export const useTableStore = defineStore("table", {
       this.setSelectedList(selectedList);
     },
     cellSelectSend(val) {
-      streamSelectedCell({
+      streamSend(SEVENTS.CELL.FOCUS, {
         ...val,
         tableName: this.fileName,
         sheetName: this.sheetName,
       });
     },
     cellUpdateSend(val) {
-      streamUpdatedCell({
+      streamSend(SEVENTS.CELL.SAVE, {
         ...val,
         tableName: this.fileName,
         sheetName: this.sheetName,
