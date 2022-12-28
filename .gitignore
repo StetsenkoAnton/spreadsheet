@@ -13,9 +13,8 @@ dist
 coverage
 *.local
 
-/cypress/videos/
-/cypress/screenshots/
-/documents
+documents
+tmp
 
 # Editor directories and files
 .vscode/*
