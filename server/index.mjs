@@ -2,10 +2,13 @@ import { fileURLToPath } from "url";
 import cors from "cors";
 import { Server } from "socket.io";
 import { default as http } from "http";
+import pino from "pino-http";
 import path from "path";
 import express from "express";
 import cookieSession from "cookie-session";
 import crypto from "crypto";
+
+import { initExpressLogger, logger } from "./logger.mjs";
 import { getIp } from "./utils/osUtils.mjs";
 import API_V_1 from "./api/index.router.mjs";
 import registerEvents from "./utils/websocket.handler.mjs";
@@ -29,6 +32,9 @@ if (isProd) {
     })
   );
 }
+
+// use logger
+app.use(initExpressLogger(new pino()));
 
 // todo: update with values from env
 app.use(
@@ -75,10 +81,19 @@ io.on("connection", (socket) => {
   registerEvents(io, socket);
 });
 
-
 server.listen(3000, () => {
   const allIPs = ['localhost', ...getIp()];
   allIPs.forEach((ip) => {
     console.log(`listening on http://${ip}:3000`);
-  })
+  });
+
+  process.on('uncaughtException', (err) => {
+    logger.error(err);
+    process.exit(1);
+  });
+  
+  process.on('unhandledRejection', (err) => {  
+    logger.error(err);
+    process.exit(1);
+  });
 });

@@ -1,4 +1,4 @@
-// adapt Sheetjs sheet object to 2 dimentional array
+// adapt Sheetjs sheet object to 2 dimensional array
 function _adaptToArray(spreadsheet) {
   let adaptedData = [];
 
