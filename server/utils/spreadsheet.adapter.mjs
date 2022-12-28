@@ -1,3 +1,5 @@
+import { logger } from "../logger.mjs";
+
 // adapt Sheetjs sheet object to 2 dimensional array
 function _adaptToArray(spreadsheet) {
   let adaptedData = [];
@@ -35,7 +37,7 @@ function _adaptToArray(spreadsheet) {
 
     _normalizeDimensionalArray(adaptedData, maxCellIndex);
   } else {
-    console.error("Unable to read spreadsheet", spreadsheet);
+    logger.error("Unable to read spreadsheet", spreadsheet);
   }
 
   return adaptedData;
@@ -58,9 +60,4 @@ function _normalizeDimensionalArray(array, maxCellIndex) {
   }
 }
 
-function _adaptFromArray(array) {
-    console.log(array);
-}
-
 export const adaptToArray = _adaptToArray;
-export const adaptFromArray = _adaptFromArray;

@@ -1,4 +1,5 @@
 import express from "express";
+import { logger } from "../../logger.mjs";
 
 import DocumentController from "../../controller/document.controller.mjs";
 
@@ -11,6 +12,7 @@ documentRouter
       .getDocuments()
       .then((files) => res.json(files))
       .catch((error) => {
+        logger.error(error);
         next(error);
       });
   })
