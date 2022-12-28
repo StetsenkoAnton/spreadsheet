@@ -1,15 +1,12 @@
-//import { readdirSync } from 'fs';
 import { fileURLToPath } from "url";
 import cors from "cors";
-// import { createRequire } from 'node:module';
 import { Server } from "socket.io";
 import { default as http } from "http";
-import * as fs from "fs";
 import path from "path";
 import express from "express";
 import cookieSession from "cookie-session";
 import crypto from "crypto";
-import os from "os";
+import { getIp } from "./utils/osUtils.mjs";
 import API_V_1 from "./api/index.router.mjs";
 import registerEvents from "./utils/websocket.handler.mjs";
 
@@ -78,11 +75,6 @@ io.on("connection", (socket) => {
   registerEvents(io, socket);
 });
 
-function getIp() {
-  const interfaces = os.networkInterfaces();
-  const interfacesArr = Object.values(interfaces).flat();
-  return interfacesArr.filter((el) => el.family === 'IPv4' && !el.internal).map((el) => el.address);
-}
 
 server.listen(3000, () => {
   const allIPs = ['localhost', ...getIp()];
