@@ -100,7 +100,7 @@ var DocumentTracker = function () {
       const row = sheet.getRow(cellData.row);
       const col = row.getCell(cellData.col);
 
-      col.value = cellData.value;
+      col.value = cellData.value || '';
     } else {
       logger.error(
         `Unable to update document. Document tracker misses such record. ${documentName}`
