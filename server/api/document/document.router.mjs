@@ -1,4 +1,5 @@
 import express from "express";
+import { logger } from "../../logger.mjs";
 
 import DocumentController from "../../controller/document.controller.mjs";
 
@@ -11,12 +12,15 @@ documentRouter
       .getDocuments()
       .then((files) => res.json(files))
       .catch((error) => {
+        logger.error(error);
         next(error);
       });
   })
-  .get("/:name", (req, res) => {
+  .get("/:name", async (req, res) => {
     const documentController = new DocumentController();
-    res.json(documentController.getDocument(req.params.name, req.session.sid));
+    res.json(
+      await documentController.getDocument(req.params.name, req.session.sid)
+    );
   });
 
 export default documentRouter;

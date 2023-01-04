@@ -1,62 +1,50 @@
-const VALUE_KEY = "v";
+import { logger } from "../logger.mjs";
 
-// adapt Sheetjs sheet object to 2 dimentional array
+// adapt Sheetjs sheet object to 2 dimensional array
 function _adaptToArray(spreadsheet) {
   let adaptedData = [];
 
-  if (spreadsheet && spreadsheet["!data"]) {
+  if (spreadsheet) {
     let maxCellIndex = 0;
 
-    for (let ri = 0; ri < spreadsheet["!data"].length; ri++) {
-      let row = spreadsheet["!data"][ri];
-      let rowData = {
-        lineNumber: ri,
-        row: [],
-      };
+    spreadsheet.eachRow(
+      { includeEmpty: true },
+      function adaptRow(row, rowNumber) {
+        let rowData = {
+          lineNumber: rowNumber,
+          row: [],
+        };
 
-      if (row) {
-        if (row.length > maxCellIndex) {
-          maxCellIndex = row.length;
+        if (row.cellCount > maxCellIndex) {
+          maxCellIndex = row.cellCount;
         }
 
-        for (let ci = 0; ci < maxCellIndex; ci++) {
-          if (row[ci]) {
-            // push row's cell to rowData array
+        row.eachCell(
+          { includeEmpty: true },
+          function adaptCell(cell, colNumber) {
             rowData.row.push({
-              value: row[ci][VALUE_KEY],
-              column: ci,
-              selected: false,
-            });
-          } else {
-            rowData.row.push({
-              value: " ",
-              column: ci,
+              value: cell.value,
+              column: colNumber,
               selected: false,
             });
           }
-        }
+        );
+
+        // push each row to returned array
+        adaptedData.push(rowData);
       }
+    );
 
-      // push each row to returned array
-      adaptedData.push(rowData);
-    }
-
-    _normilizeDimentionalArray(adaptedData, maxCellIndex);
+    _normalizeDimensionalArray(adaptedData, maxCellIndex);
   } else {
-    console.error("Unable to read spreadsheet", spreadsheet);
+    logger.error("Unable to read spreadsheet", spreadsheet);
   }
 
   return adaptedData;
 }
-// {
-//   TABLENAME: {
-//     selectedList: []
-//     rawTable: []
-//   }
-// }
-// rawTable
-// normalize two dimentional array to match subarray length - maxCellIndex
-function _normilizeDimentionalArray(array, maxCellIndex) {
+
+// normalize two dimensional array to match subarray length - maxCellIndex
+function _normalizeDimensionalArray(array, maxCellIndex) {
   for (let i = 0; i < array.length; i++) {
     let rowData = array[i];
 
@@ -65,15 +53,11 @@ function _normilizeDimentionalArray(array, maxCellIndex) {
         rowData.row.push({
           value: "",
           column: ci,
+          selected: false
         });
       }
     }
   }
 }
 
-function _adaptFromArray(array) {
-    console.log(array);
-}
-
 export const adaptToArray = _adaptToArray;
-export const adaptFromArray = _adaptFromArray;

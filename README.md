@@ -25,6 +25,5 @@ yarn start
 ```
 
 ## TODOS
-- При сохранении не перезатирать форматирование ячеек
-- Добавить автосохранение при изменении ячейки.
-- 
+- Handle double save event on ```enter```
+- Handle files as a stream

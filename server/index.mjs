@@ -1,29 +1,27 @@
-//import { readdirSync } from 'fs';
 import { fileURLToPath } from "url";
 import cors from "cors";
-// import { createRequire } from 'node:module';
 import { Server } from "socket.io";
 import { default as http } from "http";
-import * as XLSX from "xlsx/xlsx.mjs";
-import * as fs from "fs";
+import pino from "pino-http";
 import path from "path";
 import express from "express";
 import cookieSession from "cookie-session";
 import crypto from "crypto";
-import os from "os";
+
+import { initExpressLogger, logger } from "./logger.mjs";
+import { getIp } from "./utils/osUtils.mjs";
 import API_V_1 from "./api/index.router.mjs";
 import registerEvents from "./utils/websocket.handler.mjs";
 
-const isProd = process.env.NODE_ENV === "production";
+const isProd = process.env.NODE_ENV === "production ";
 const rootFolder = "../dist";
-/* load 'fs' for readFile and writeFile support */
-XLSX.set_fs(fs);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 const devCors = ["http://127.0.0.1:5173", "http://localhost:5173"];
 const indexFile = new URL(`${rootFolder}/index.html`, import.meta.url);
 
+console.log(process.env);
 if (isProd) {
   app.use(express.static(path.join(__dirname, `/${rootFolder}`)));
 
@@ -35,6 +33,9 @@ if (isProd) {
     })
   );
 }
+
+// use logger
+if (!isProd) app.use(initExpressLogger(new pino()));
 
 // todo: update with values from env
 app.use(
@@ -63,6 +64,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// use const for api version
 app.use("/api/v1", API_V_1);
 app.get("*", (req, res) => {
   res.sendFile(fileURLToPath(indexFile));
@@ -80,15 +82,19 @@ io.on("connection", (socket) => {
   registerEvents(io, socket);
 });
 
-function getIp() {
-  const interfaces = os.networkInterfaces();
-  const interfacesArr = Object.values(interfaces).flat();
-  return interfacesArr.filter((el) => el.family === 'IPv4' && !el.internal).map((el) => el.address);
-}
-
 server.listen(3000, () => {
   const allIPs = ['localhost', ...getIp()];
   allIPs.forEach((ip) => {
     console.log(`listening on http://${ip}:3000`);
-  })
+  });
+
+  process.on('uncaughtException', (err) => {
+    logger.error(err);
+    process.exit(1);
+  });
+
+  process.on('unhandledRejection', (err) => {
+    logger.error(err);
+    process.exit(1);
+  });
 });
