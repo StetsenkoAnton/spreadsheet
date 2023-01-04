@@ -7,27 +7,19 @@ const serverRoot =
   import.meta.env.MODE === "development" ? "http://localhost:3000" : "";
 const serverPath = `${serverRoot}/api/v1/`;
 
+/** SOCKET */
 const socket = io(serverRoot);
 
-export function streamGet(name, cb, fileName) {
+export function subscribeEv(name, cb, fileName) {
   socket.on(name, (e) => {
     console.log("get", name, fileName, e);
     if (e.tableName === fileName) cb(e);
   });
 }
-
 export function unSubscribeEv(name) {
   socket.removeAllListeners(name);
 }
-export function subscribeFocusEv(cb, fileName) {
-  streamGet(SEVENTS.CELL.FOCUSED, cb, fileName);
-}
-export function subscribeUpdateEv(cb, fileName) {
-  streamGet(SEVENTS.CELL.SAVED, cb, fileName);
-}
-export function subscribeDocumentSavedEv(cb, fileName) {
-  streamGet(SEVENTS.DOCUMENT.SAVED, cb, fileName);
-}
+
 export function subscribeServerEv(cb) {
   socket.on("connect", () => {
     console.log("connect", socket.id);
@@ -43,15 +35,16 @@ export function streamSend(name, body) {
   console.log("send", name, body);
   socket.emit(name, body);
 }
-export function streamSelectedCell(body) {
-  streamSend(SEVENTS.CELL.FOCUS, body);
-}
-export function streamUpdatedCell(body) {
-  streamSend(SEVENTS.CELL.SAVE, body);
+
+// TODO delete after auto save
+export function subscribeDocumentSavedEv(cb, fileName) {
+  subscribeEv(SEVENTS.DOCUMENT.SAVED, cb, fileName);
 }
 export function streamSaveFile(body) {
   streamSend(SEVENTS.DOCUMENT.SAVE, body);
 }
+
+/** REST */
 function apiRequest(path) {
   const options = {
     headers: {

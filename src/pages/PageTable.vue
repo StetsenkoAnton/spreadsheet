@@ -13,13 +13,7 @@
           <ServerStatus />
         </div>
       </div>
-      <div class="col-auto">
-        <BtnSaveDocument
-          v-if="fileName"
-          :table-name="fileName"
-          :sheet-name="sheetName"
-        />
-      </div>
+      <div class="col-auto"></div>
     </div>
 
     <TheTable class="page-table" v-if="rawTable.length" />
@@ -29,7 +23,6 @@
 
 <script>
 import TheTable from "@/components/Table.vue";
-import BtnSaveDocument from "@/components/BtnSaveDocument.vue";
 import ServerStatus from "@/components/ServerStatus.vue";
 import { mapState, mapActions } from "pinia";
 import { useTableStore } from "@/store/table.js";
@@ -40,7 +33,6 @@ export default {
   components: {
     ServerStatus,
     TheTable,
-    BtnSaveDocument,
   },
   mounted() {
     this.getFile();
