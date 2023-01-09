@@ -25,5 +25,9 @@ yarn start
 ```
 
 ## TODOS
+- Discuss zero or 1 based row, cell numeration
 - Handle double save event on ```enter```
 - Handle files as a stream
+- Send error if file busy
+- remove file if no user 
+- wrong column counting
