@@ -97,8 +97,8 @@ var DocumentTracker = function () {
     if (this._documentsMap.has(documentName)) {
       const workbook = this._documentsMap.get(documentName);
       const sheet = workbook.worksheets[0];
-      const row = sheet.getRow(cellData.row);
-      const col = row.getCell(cellData.col);
+      const row = sheet.getRow(cellData.row + 1);
+      const col = row.getCell(cellData.col + 1);
 
       col.value = cellData.value;
     } else {

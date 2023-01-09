@@ -1,7 +1,7 @@
 import { logger } from "../logger.mjs";
 import { toEmptyString } from "./string.utils.js";
 
-// adapt Sheetjs sheet object to 2 dimensional array
+// normalize sheet object to 2 dimensional array
 function _adaptToArray(spreadsheet) {
   let adaptedData = [];
 
@@ -12,7 +12,8 @@ function _adaptToArray(spreadsheet) {
       { includeEmpty: true },
       function adaptRow(row, rowNumber) {
         let rowData = {
-          lineNumber: rowNumber,
+          // make it zero based counting
+          lineNumber: rowNumber - 1,
           row: [],
         };
 
@@ -24,9 +25,8 @@ function _adaptToArray(spreadsheet) {
           { includeEmpty: true },
           function adaptCell(cell, colNumber) {
             rowData.row.push({
-              value: cell.value,
-              column: colNumber,
               value: toEmptyString(cell.value),
+              column: colNumber - 1,
               selected: false,
             });
           }

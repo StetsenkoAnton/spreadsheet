@@ -30,4 +30,3 @@ yarn start
 - Handle files as a stream
 - Send error if file busy
 - remove file if no user 
-- wrong column counting
