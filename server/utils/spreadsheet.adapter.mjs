@@ -51,7 +51,7 @@ function _normalizeDimensionalArray(array, maxCellIndex) {
     let rowData = array[i];
 
     if (rowData.row.length < maxCellIndex) {
-      for (let ci = rowData.row.length; ci < maxCellIndex; ci++) {
+      for (let ci = rowData.row.length + 1; ci <= maxCellIndex; ci++) {
         rowData.row.push({
           value: "",
           column: ci,
