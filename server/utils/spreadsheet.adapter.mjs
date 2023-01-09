@@ -1,4 +1,5 @@
 import { logger } from "../logger.mjs";
+import { toEmptyString } from "./string.utils.js";
 
 // adapt Sheetjs sheet object to 2 dimensional array
 function _adaptToArray(spreadsheet) {
@@ -25,6 +26,7 @@ function _adaptToArray(spreadsheet) {
             rowData.row.push({
               value: cell.value,
               column: colNumber,
+              value: toEmptyString(cell.value),
               selected: false,
             });
           }
