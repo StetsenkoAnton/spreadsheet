@@ -6,7 +6,7 @@
       v-model="cellRaw"
       ref="input"
       rows="auto"
-      @blur="cellRest"
+      @blur="onBlur"
       @keydown.esc="cellRest"
       @keydown.exact.enter="cellRest"
       @keydown.exact.ctrl.enter="onEnter"
@@ -62,7 +62,6 @@ export default {
     ...mapActions(useTableStore, ["cellUpdateSend", "cellSelectSend"]),
     cellRest() {
       this.status = STATUS.rest;
-      this.onBlur();
     },
     cellEdit() {
       if (this.cellValue.selected) return;
@@ -84,6 +83,7 @@ export default {
       this.cellSelectSend(this.getRequestDate(this.cellValue.value));
     },
     onBlur() {
+      this.status = STATUS.rest;
       const cell = this.cellValue;
       cell.value = this.cellRaw;
       this.cellUpdateSend(this.getRequestDate(this.cellRaw));

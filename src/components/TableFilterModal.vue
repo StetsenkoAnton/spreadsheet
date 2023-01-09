@@ -149,15 +149,18 @@ export default {
     };
   },
   computed: {
-    ...mapState(useFiltersStore, ["sortSettings", "filtersSettings"]),
+    ...mapState(useFiltersStore, [
+      "sortSettings",
+      "filtersSettings",
+      "sortedTable",
+    ]),
     ...mapState(useTableStore, ["rawTable"]),
     currentFilter() {
       return this.filtersSettings[this.filteredOrder];
     },
     unicValues() {
-      const list = this.rawTable.map(
-        ({ row }) => row[this.columnInfo.index].value
-      );
+      const table = this.isCurrentFilter ? this.rawTable : this.sortedTable;
+      const list = table.map(({ row }) => row[this.columnInfo.index].value);
       list.sort();
       return new Set(list);
     },
