@@ -7,7 +7,9 @@ function filterIteration(filtersSettings, list) {
     const cellNormalize = row[filtersSettings.column].value
       .toString()
       .toUpperCase();
-    if (filtersSettings.isExact) return searchNormalize === cellNormalize;
+    if (filtersSettings.isExact || searchNormalize === "") {
+      return searchNormalize === cellNormalize;
+    }
     return cellNormalize.includes(searchNormalize);
   });
 }
@@ -49,8 +51,7 @@ export const useFiltersStore = defineStore("filters", {
     },
     setStoreFilter({ index, filter }) {
       if (!filter) this.filtersSettings.splice(index, 1);
-      else if (index < 0 && filter.search.length)
-        this.filtersSettings.push(filter);
+      else if (index < 0) this.filtersSettings.push(filter);
       else this.filtersSettings[index] = filter;
     },
     resetStoreFilters() {

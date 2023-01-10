@@ -5,7 +5,7 @@ export const table = [
     row: [
       {
         column: 0,
-        value: "Lou Small",
+        value: "",
       },
       {
         column: 1,
@@ -75,7 +75,7 @@ export const table = [
       },
       {
         column: 6,
-        value: "Graham Camacho",
+        value: "",
       },
       {
         column: 7,
@@ -133,7 +133,7 @@ export const table = [
       },
       {
         column: 9,
-        value: "Roach Shaffer",
+        value: "",
       },
     ],
   },
@@ -235,7 +235,7 @@ export const table = [
     row: [
       {
         column: 0,
-        value: "Guzman Serrano",
+        value: "",
       },
       {
         column: 1,

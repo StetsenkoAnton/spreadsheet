@@ -93,6 +93,7 @@
 import { useTableStore } from "@/store/table.js";
 
 const sortLine = ["asc", "desc", ""];
+const emptyCell = "[пусто]";
 
 import { mapActions, mapState } from "pinia";
 import { useFiltersStore } from "@/store/filters.js";
@@ -160,9 +161,16 @@ export default {
     },
     unicValues() {
       const table = this.isCurrentFilter ? this.rawTable : this.sortedTable;
-      const list = table.map(({ row }) => row[this.columnInfo.index].value);
+      const list = table.map(
+        ({ row }) => row[this.columnInfo.index].value || emptyCell
+      );
       list.sort();
       return new Set(list);
+    },
+  },
+  watch: {
+    'filter.search' (newSearch) {
+      if (newSearch === emptyCell) this.filter.search = "";
     },
   },
   methods: {
@@ -175,8 +183,9 @@ export default {
       this.closeFilter();
     },
     applyFilter() {
-      if (this.filter.search) this.setFilter(this.filter);
-      else this.setFilter(null);
+      this.setFilter(this.filter);
+      // if (this.filter.search) this.setFilter(this.filter);
+      // else this.setFilter(null);
     },
     resetFilter() {
       this.setFilter(null);
