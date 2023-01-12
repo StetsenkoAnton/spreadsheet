@@ -30,3 +30,4 @@ yarn start
 - Handle files as a stream
 - Send error if file busy
 - remove file if no user 
+- Return error message instead of breaking server
