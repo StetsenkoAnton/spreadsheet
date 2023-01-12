@@ -116,8 +116,14 @@ export default class DocumentController {
       try {
         await workbook.xlsx.writeFile(filePath);
       } catch (error) {
-        logger.error(`Unable to save data to ${documentName}, document is busy.`, error);
-
+        logger.error(
+          `Unable to save data to ${documentName}, document is busy.`,
+          error
+        );
+        throw new Error(
+          `Unable to save document: ${documentName} - ${error.message}`,
+          error
+        );
       }
     } else {
       logger.error(
