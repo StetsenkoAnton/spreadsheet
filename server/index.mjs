@@ -13,7 +13,7 @@ import { getIp } from "./utils/osUtils.mjs";
 import API_V_1 from "./api/index.router.mjs";
 import registerEvents from "./utils/websocket.handler.mjs";
 
-const isProd = process.env.NODE_ENV === "production ";
+const isProd = process.env.NODE_ENV === "production";
 const rootFolder = "../dist";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,7 +21,7 @@ const app = express();
 const devCors = ["http://127.0.0.1:5173", "http://localhost:5173"];
 const indexFile = new URL(`${rootFolder}/index.html`, import.meta.url);
 
-console.log(process.env);
+console.log(isProd);
 if (isProd) {
   app.use(express.static(path.join(__dirname, `/${rootFolder}`)));
 

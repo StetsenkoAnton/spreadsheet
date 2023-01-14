@@ -24,6 +24,13 @@ yarn build
 yarn start
 ```
 
+To start using npm run
+```sh
+npm run startnpm
+```
+
+yarn does not work with ```set``` command, npm does not work without ```set``` command for setting environment
+
 ## TODOS
 - Discuss zero or 1 based row, cell numeration
 - Handle double save event on ```enter```
