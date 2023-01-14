@@ -1,19 +1,17 @@
 import express from "express";
-import { logger } from "../../logger.mjs";
 
 import DocumentController from "../../controller/document.controller.mjs";
 
 const documentRouter = express.Router();
 
 documentRouter
-  .get("/", (req, res, next) => {
+  .get("/", (req, res) => {
     const documentController = new DocumentController();
-    documentController
+    return documentController
       .getDocuments()
-      .then((files) => res.json(files))
+      .then((response) => res.json(response))
       .catch((error) => {
-        logger.error(error);
-        next(error);
+        res.json(error);
       });
   })
   .get("/:name", async (req, res) => {

@@ -13,26 +13,26 @@ import { getIp } from "./utils/osUtils.mjs";
 import API_V_1 from "./api/index.router.mjs";
 import registerEvents from "./utils/websocket.handler.mjs";
 
-const isProd = process.env.NODE_ENV === "production ";
+const isProd = process.env.NODE_ENV === "production";
 const rootFolder = "../dist";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
-const devCors = ["http://127.0.0.1:5173", "http://localhost:5173"];
+const serverInfo = getIp(isProd);
 const indexFile = new URL(`${rootFolder}/index.html`, import.meta.url);
 
-console.log(process.env);
+console.log("PROD: " + isProd);
 if (isProd) {
   app.use(express.static(path.join(__dirname, `/${rootFolder}`)));
 
-} else {
-  app.use(
-    cors({
-      origin: devCors,
-      credentials: true,
-    })
-  );
 }
+
+app.use(
+  cors({
+    origin: serverInfo.cors,
+    credentials: true,
+  })
+);
 
 // use logger
 if (!isProd) app.use(initExpressLogger(new pino()));
@@ -73,7 +73,7 @@ app.get("*", (req, res) => {
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: devCors,
+    origin: serverInfo.cors,
     credentials: true,
   },
 });
@@ -82,10 +82,9 @@ io.on("connection", (socket) => {
   registerEvents(io, socket);
 });
 
-server.listen(3000, () => {
-  const allIPs = ['localhost', ...getIp()];
-  allIPs.forEach((ip) => {
-    console.log(`listening on http://${ip}:3000`);
+server.listen(serverInfo.port, () => {
+  serverInfo.ips.forEach((ip) => {
+    console.log(`listening on http://${ip}:${serverInfo.port}`);
   });
 
   process.on('uncaughtException', (err) => {

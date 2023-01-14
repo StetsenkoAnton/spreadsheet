@@ -32,8 +32,13 @@ export function subscribeServerEv(cb) {
   });
 }
 export function streamSend(name, body) {
-  console.log("send", name, body);
-  socket.emit(name, body);
+  console.log("send", name,  body);
+  socket.emit(name, body, (response) => {
+    // TODO: handle response
+    if (!response.success) {
+      console.error(response.message)
+    }
+  });
 }
 
 // TODO delete after auto save
@@ -52,23 +57,28 @@ function apiRequest(path) {
     },
   };
   return fetch(path, options)
-    .then((response) => response.json())
-    .then((data) => data)
+    .then((response) => {
+      // can be a promise or a server response, use promise resolve to handle it
+      // promise - when async operation result returned
+      // server response - sync operation result
+      return Promise.resolve(response.json()).then(result => {
+        if (result.success) {
+          return result.data;
+        } else {
+          // TODO: handle error
+          console.error(result.message, result.code);
+          throw new Error(result.message);
+        }
+      });
+    })
     .catch((error) => {
+      console.error(`Unhandled error: ${error.message}`, error);
       throw new Error(error);
     });
 }
 export function getAllFiles() {
-  return apiRequest(`${serverPath}document`)
-    .then((response) => response)
-    .catch((error) => {
-      throw new Error(error);
-    });
+  return apiRequest(`${serverPath}document`);
 }
 export function getTable(name) {
-  return apiRequest(`${serverPath}document/${name}`)
-    .then((response) => response)
-    .catch((error) => {
-      throw new Error(error);
-    });
+  return apiRequest(`${serverPath}document/${name}`);
 }
