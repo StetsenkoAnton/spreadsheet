@@ -4,9 +4,9 @@ import XLSX from "exceljs";
 
 import { logger } from "../logger.mjs";
 import envUtils from "../env-utils.mjs";
-import DocumentTracker from "../utils/document.tracker.js";
+import DocumentTracker from "../utils/document.tracker.mjs";
 import { adaptToArray } from "../utils/spreadsheet.adapter.mjs";
-import { guard } from "../utils/guard.js";
+import { guard } from "../utils/guard.mjs";
 
 export default class DocumentController {
   _documentsFolderURL = undefined;

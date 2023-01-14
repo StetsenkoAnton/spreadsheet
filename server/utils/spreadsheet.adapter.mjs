@@ -1,5 +1,5 @@
 import { logger } from "../logger.mjs";
-import { toEmptyString } from "./string.utils.js";
+import { toEmptyString } from "./string.utils.mjs";
 
 // normalize sheet object to 2 dimensional array
 function _adaptToArray(spreadsheet) {
