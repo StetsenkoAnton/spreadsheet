@@ -33,8 +33,6 @@ yarn does not work with ```set``` command, npm does not work without ```set``` c
 
 ## TODOS
 - Discuss zero or 1 based row, cell numeration
-- Handle double save event on ```enter```
 - Handle files as a stream
-- Send error if file busy
 - remove file if no user 
-- Return error message instead of breaking server
+- return cell style
