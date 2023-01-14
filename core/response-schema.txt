@@ -1,8 +1,8 @@
 // response object
 {
-    "status": "bool",   // true - success, false - error
-    "data": "json object | null",
-    "message": "string | null",
+    "success": "bool",   // true - success, false - error
+    "data": "json object",
+    "message": "string",
     "code": "int"       // 200, 400, 403, 404
 }
 
@@ -13,3 +13,4 @@ error
     400 - bad request
     403 - forbidden
     404 - not found
+    500 - server error
