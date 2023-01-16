@@ -24,7 +24,6 @@ const indexFile = new URL(`${rootFolder}/index.html`, import.meta.url);
 console.log("PROD: " + isProd);
 if (isProd) {
   app.use(express.static(path.join(__dirname, `/${rootFolder}`)));
-
 }
 
 app.use(
