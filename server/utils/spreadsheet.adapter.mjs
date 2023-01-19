@@ -47,6 +47,30 @@ function _adaptToArray(spreadsheet) {
   return adaptedData;
 }
 
+function _columnsToObject(columns) {
+  if (columns && columns.length) {
+    const columnsAsObject = [];
+
+    for (let i = 0; i < columns.length; i++) {
+      const column = columns[i];
+
+      if (column.width !== undefined) {
+        columnsAsObject.push({
+          width: (column.width / 8.43 * 64) + 32
+        });
+      } else {
+        // default width
+        columnsAsObject.push({
+          width: 64
+        });
+      }
+
+    }
+  }
+
+  return [];
+}
+
 // normalize two dimensional array to match subarray length - maxCellIndex
 function _normalizeDimensionalArray(array, maxCellIndex) {
   for (let i = 0; i < array.length; i++) {
@@ -188,3 +212,4 @@ function _styleToArgb(style) {
 }
 
 export const adaptToArray = _adaptToArray;
+export const columnsToArray = _columnsToObject;

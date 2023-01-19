@@ -5,7 +5,7 @@ import XLSX from "exceljs";
 import { logger } from "../logger.mjs";
 import envUtils from "../env-utils.mjs";
 import DocumentTracker from "../utils/document.tracker.mjs";
-import { adaptToArray } from "../utils/spreadsheet.adapter.mjs";
+import { adaptToArray, columnsToArray } from "../utils/spreadsheet.adapter.mjs";
 import { guard } from "../utils/guard.mjs";
 import { error, success } from "../utils/controller.utils.mjs";
 import { CONST } from "../../core/constant.js";
@@ -79,7 +79,10 @@ export default class DocumentController {
           return success({
             name: documentName,
             sheetName: firstWorksheet.name,
-            data: adaptToArray(firstWorksheet),
+            data: {
+              rows: adaptToArray(firstWorksheet),
+              columns: columnsToArray(firstWorksheet.columns)
+            },
             users: this._docTracker.getUsers(documentName),
             // focused cells
             selectedList: this._docTracker.getFocussedCell(documentName),

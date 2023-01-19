@@ -33,9 +33,11 @@ export const useTableStore = defineStore("table", {
       } else {
         return getTable(name)
           .then((table) => {
+            // table.data.rows - rows with data
+            // table.data.columns - columns info where width is pixel amount - { width: decimal }
             this.fileName = table.name;
             this.sheetName = table.sheetName;
-            this.rawTable = table.data;
+            this.rawTable = table.data.rows;
             this.setSelectedList(table.selectedList);
             return table.name;
           })
