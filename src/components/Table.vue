@@ -140,7 +140,6 @@ export default {
 }
 .table__td {
   padding: 0 !important;
-  text-align: center;
   height: 1.75em;
 }
 </style>

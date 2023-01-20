@@ -75,7 +75,6 @@ export default class DocumentController {
         if (workbook && workbook.worksheets.length) {
           this._docTracker.addUser(documentName, userUID);
           const firstWorksheet = workbook.worksheets[0];
-
           return success({
             name: documentName,
             sheetName: firstWorksheet.name,
@@ -91,7 +90,7 @@ export default class DocumentController {
           logger.error(
             `Document ${filePath} is empty and does not have any worksheets.`
           );
-          return error(CONST.RESPONSE.CODE.FORBIDDEN, 
+          return error(CONST.RESPONSE.CODE.FORBIDDEN,
             `Document ${filePath} is empty and does not have any worksheets.`
           );
         }
@@ -198,7 +197,7 @@ export default class DocumentController {
     logger.error(
       `${action} Document name cannot be null or empty string. Document: ${documentName}`
     );
-    
+
     return false;
   }
 
