@@ -65,7 +65,7 @@ function _columnsToObject(columns) {
 
       if (column.width !== undefined) {
         columnsAsObject.push({
-          width: (column.width / 8.43 * 64) + 32
+          width: Math.round((column.width / 8.43 * 64)) + 32
         });
       } else {
         // default width
@@ -73,8 +73,9 @@ function _columnsToObject(columns) {
           width: 64
         });
       }
-
     }
+
+    return columnsAsObject;
   }
 
   return [];
