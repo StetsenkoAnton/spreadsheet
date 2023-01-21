@@ -8,6 +8,8 @@ import {
 } from "./color.utils.js";
 import { toEmptyString } from "./string.utils.mjs";
 
+const POINTS_TO_PIXEL_MULTIPLIER = 1.33;
+
 // normalize sheet object to 2 dimensional array
 function _adaptToArray(spreadsheet) {
   let adaptedData = [];
@@ -22,6 +24,7 @@ function _adaptToArray(spreadsheet) {
           // make it zero based counting
           lineNumber: rowNumber - 1,
           row: [],
+          height:  _rowHeightToPx(row.height),
         };
 
         if (row.cellCount > maxCellIndex) {
@@ -116,6 +119,10 @@ function _styleToArgb(style) {
     borderBottom: getBorder(style?.border?.bottom),
     borderLeft: getBorder(style?.border?.left),
   };
+}
+
+function _rowHeightToPx(height) {
+  return height ? Math.round(height * POINTS_TO_PIXEL_MULTIPLIER) : null;
 }
 
 export const adaptToArray = _adaptToArray;
