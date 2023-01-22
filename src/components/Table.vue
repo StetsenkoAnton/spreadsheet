@@ -11,7 +11,7 @@
         <tbody :style="{ fontSize: `${fontSize}px` }">
           <tr :style="{ height: `${firstRowH}px` }"></tr>
           <tr v-for="{ lineNumber, row } in visibleTable" :key="lineNumber">
-            <td class="bg-light pt-0 pb-0">
+            <td class="bg-light pt-0 pb-0" style="width: 2em">
               <b>{{ lineNumber + 1 }}</b>
             </td>
             <td v-for="cell in row" :key="cell.column" class="table__td">
@@ -140,7 +140,6 @@ export default {
 }
 .table__td {
   padding: 0 !important;
-  text-align: center;
   height: 1.75em;
 }
 </style>

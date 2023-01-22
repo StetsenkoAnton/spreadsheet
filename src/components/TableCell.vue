@@ -1,5 +1,11 @@
 <template>
-  <div :class="cellClass" tabindex="-1" ref="cell" @dblclick="cellEdit">
+  <div
+    :class="cellClass"
+    tabindex="-1"
+    ref="cell"
+    @dblclick="cellEdit"
+    :style="cellValue.style"
+  >
     <textarea
       v-if="status === 'edit'"
       class="table-cell__input"

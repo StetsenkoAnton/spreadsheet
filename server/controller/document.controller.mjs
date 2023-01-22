@@ -5,7 +5,7 @@ import XLSX from "exceljs";
 import { logger } from "../logger.mjs";
 import envUtils from "../env-utils.mjs";
 import DocumentTracker from "../utils/document.tracker.mjs";
-import { adaptToArray } from "../utils/spreadsheet.adapter.mjs";
+import { adaptToArray, columnsToArray } from "../utils/spreadsheet.adapter.mjs";
 import { guard } from "../utils/guard.mjs";
 import { error, success } from "../utils/controller.utils.mjs";
 import { CONST } from "../../core/constant.js";
@@ -75,11 +75,13 @@ export default class DocumentController {
         if (workbook && workbook.worksheets.length) {
           this._docTracker.addUser(documentName, userUID);
           const firstWorksheet = workbook.worksheets[0];
-
           return success({
             name: documentName,
             sheetName: firstWorksheet.name,
-            data: adaptToArray(firstWorksheet),
+            data: {
+              rows: adaptToArray(firstWorksheet),
+              columns: columnsToArray(firstWorksheet.columns)
+            },
             users: this._docTracker.getUsers(documentName),
             // focused cells
             selectedList: this._docTracker.getFocussedCell(documentName),
@@ -88,7 +90,7 @@ export default class DocumentController {
           logger.error(
             `Document ${filePath} is empty and does not have any worksheets.`
           );
-          return error(CONST.RESPONSE.CODE.FORBIDDEN, 
+          return error(CONST.RESPONSE.CODE.FORBIDDEN,
             `Document ${filePath} is empty and does not have any worksheets.`
           );
         }
@@ -195,7 +197,7 @@ export default class DocumentController {
     logger.error(
       `${action} Document name cannot be null or empty string. Document: ${documentName}`
     );
-    
+
     return false;
   }
 
