@@ -105,7 +105,6 @@ function _normalizeDimensionalArray(array, maxCellIndex) {
 function _styleToArgb(style) {
   if (!style) return null;
   return {
-    fontSize: style.font?.size,
     color: argb2Hex(style.font?.color?.argb),
     fontFamily: getFontFamily(style.font?.name, style.font?.family),
     fontWeight: style.font?.bold ? 'bold' : null,

@@ -8,7 +8,7 @@
         class="table__th pb-1 position-relative"
       >
         <div
-          class="d-flex flex-nowrap align-items-center justify-content-between pb-1"
+          class="d-flex gap-1 flex-nowrap align-items-center justify-content-between pb-1"
         >
           <b>{{ val.name }}</b>
           <TableFilter :column-info="val" />
