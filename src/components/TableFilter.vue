@@ -31,7 +31,7 @@ import { clickOutside } from "../services/helpers";
 import TableFilterModal from "@/components/TableFilterModal.vue";
 import { mapState } from "pinia";
 import { useFiltersStore } from "@/store/filters.js";
-
+const sortLine = ["asc", "desc", ""];
 export default {
   components: { TableFilterModal },
   props: {
@@ -90,6 +90,22 @@ export default {
     },
     closeFilter() {
       this.showFilterModal = false;
+    },
+    onSort() {
+      let nextDirection = sortLine[0];
+      if (this.isCurrentSort) {
+        const index = sortLine.findIndex(
+          (dir) => dir === this.sortSettings.direction
+        );
+        nextDirection =
+          index === sortLine.length - 1 ? sortLine[0] : sortLine[index + 1];
+      }
+      return !nextDirection
+        ? null
+        : {
+            column: this.columnInfo.index,
+            direction: nextDirection,
+          };
     },
   },
 };
