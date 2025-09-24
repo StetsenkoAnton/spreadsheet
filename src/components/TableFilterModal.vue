@@ -90,13 +90,12 @@
 </template>
 
 <script>
+import { mapActions, mapState } from "pinia";
 import { useTableStore } from "@/store/table.js";
+import { useFiltersStore } from "@/store/filters.js";
 
 const sortLine = ["asc", "desc", ""];
 const emptyCell = "[пусто]";
-
-import { mapActions, mapState } from "pinia";
-import { useFiltersStore } from "@/store/filters.js";
 
 export default {
   props: {
@@ -184,8 +183,6 @@ export default {
     },
     applyFilter() {
       this.setFilter(this.filter);
-      // if (this.filter.search) this.setFilter(this.filter);
-      // else this.setFilter(null);
     },
     resetFilter() {
       this.setFilter(null);

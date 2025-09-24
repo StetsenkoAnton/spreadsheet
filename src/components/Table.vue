@@ -44,7 +44,6 @@ export default {
     TableCell,
     TableHeaderRow,
   },
-  emits: ["cellUpdated", "cellSelected"],
   mounted() {
     this.$refs.tableBox.addEventListener("scroll", this.throttleScroll);
     this.$nextTick(() => {
@@ -97,11 +96,6 @@ export default {
     },
   },
   methods: {
-    clearFilters() {
-      this.filtersSettings = [];
-      this.sortColumn = 0;
-      this.sortDirection = "";
-    },
     getVisibleRows() {
       const tableH = this.$refs.tableBox.offsetHeight;
       const tableHeadH = this.$refs.thead.$el.offsetHeight;
@@ -135,9 +129,7 @@ export default {
   grid-area: box;
   overflow: auto;
 }
-.table--invisible {
-  visibility: hidden;
-}
+
 .table__td {
   padding: 0 !important;
   height: 1.75em;
